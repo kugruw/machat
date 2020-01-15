@@ -4,9 +4,16 @@ import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 
+import {defaultNavigationOptions} from './src/config/navigation';
+import {color} from './src/config/color';
+
 import Chat from './src/screens/chat';
 import Friends from './src/screens/friends';
+
 import Account from './src/screens/account';
+import ChangePassword from './src/screens/account/Password';
+import ChangeEmail from './src/screens/account/Email';
+import Profile from './src/screens/account/Profile';
 
 import Login from './src/screens/auth/Login';
 import SignUp from './src/screens/auth/SignUp';
@@ -16,16 +23,24 @@ const AuthStack = createStackNavigator({
   SignUp,
 });
 
-const FriendsStack = createStackNavigator({
-  Friends,
-});
+const FriendsStack = createStackNavigator(
+  {
+    Friends,
+  },
+  {defaultNavigationOptions},
+);
 
-const ChatStack = createStackNavigator({
-  Chat,
-});
+const ChatStack = createStackNavigator(
+  {
+    Chat,
+  },
+  {defaultNavigationOptions},
+);
 
 const AccountStack = createStackNavigator({
   Account,
+  ChangePassword,
+  ChangeEmail,
 });
 
 const BottomTabNavigator = createBottomTabNavigator(
@@ -62,8 +77,8 @@ const BottomTabNavigator = createBottomTabNavigator(
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'tomato',
-      inactiveTintColor: 'gray',
+      activeTintColor: color.col5,
+      inactiveTintColor: color.regularGray,
     },
   },
 );
