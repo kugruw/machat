@@ -18,7 +18,7 @@ const s = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 25,
     paddingVertical: 8,
-    paddingHorizontal:10,
+    paddingHorizontal:15,
     fontSize: 18,
   },
   flexCenter: {justifyContent: 'center', alignItems: 'center', flexDirection: 'row'},
