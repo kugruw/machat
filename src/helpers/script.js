@@ -54,7 +54,9 @@ const removeDataStorage = async (item, callback) => {
 const getDataStorage = async (item, callback) => {
   try {
     const value = await AsyncStorage.getItem(item);
-    callback(value);
+    if(value !== null) {
+      callback(value);
+    }
   } catch (err) {
     callback(null);
   }

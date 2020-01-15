@@ -1,66 +1,70 @@
 import React, {useState} from 'react';
-import {View, TextInput, ActivityIndicator, Image, TouchableHighlight} from 'react-native';
+import {
+  View,
+  TextInput,
+  ActivityIndicator,
+  Image,
+  TouchableHighlight,
+} from 'react-native';
 import {Container, H1, Text, Button} from 'native-base';
 import s from '../../public/styles/login-register';
 import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles';
 import {toastr} from '../../helpers/script';
 
-const SignUp = props => {
-  const {
-    navigation: {goBack},
-  } = props;
-  let [username, setUsername] = useState('');
+import db, {firebase} from '../../config/firebase';
+
+const SignUp = ({navigation: {goBack}}) => {
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
+  let [confirmPassword, setConfirmPassword] = useState('');
   let [config, setConfig] = useState({
     loading: false,
     error: false,
   });
 
   const handleSubmit = () => {
-    if (!username || !email || !password) {
-      toastr('Please fill out all of this field.');
+    if (!email || !password || !confirmPassword) {
+      toastr('Please fill out all of this field.', 'danger');
+      return;
+    }
+    if (password !== confirmPassword) {
+      toastr("Confirm password doesn't match", 'danger');
       return;
     }
     setConfig({loading: true, error: false});
-    // axios
-    //   .post(`${API_ENDPOINT + role}/signup`, {
-    //     name,
-    //     username,
-    //     email,
-    //     password,
-    //   })
-    //   .then(() => {
-    //     setConfig({loading: false, error: false});
-    //     toastr(
-    //       'Your account successfully registered. You can login now!',
-    //       'success',
-    //     );
-    //     goBack();
-    //   })
-    //   //err
-    //   .catch(() => {
-    //     setConfig({loading: false, error: true});
-    //     toastr('Username or email already registered');
-    //   });
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then(({user}) => {
+        db.ref('users/').push({[user.uid] : {email : user.email}}, err => {
+          if (!err) {
+            setConfig({loading: false, error: false});
+            toastr(
+              'Your account successfully registered. You can login now!',
+              'success',
+            );
+            goBack();
+          }
+        });
+      })
+      .catch(err => {
+        setConfig({loading: false, error: true});
+        toastr(err.message, 'danger');
+      });
   };
   return (
     <Container style={s.center}>
       <View style={s.container}>
         <View style={[s.header, s.center]}>
-          <Image source={require('../../public/images/logo.png')} />
-        </View>
-        <View style={s.section}>
-          <TextInput
-            placeholder="Username"
-            style={s.input}
-            value={username}
-            onChangeText={text => setUsername(text)}
+          <Image
+            source={require('../../public/images/logo.png')}
+            style={s.img}
           />
         </View>
         <View style={s.section}>
           <TextInput
+            editable={!config.loading}
             style={s.input}
             placeholder="Email"
             value={email}
@@ -69,6 +73,7 @@ const SignUp = props => {
         </View>
         <View style={s.section}>
           <TextInput
+            editable={!config.loading}
             secureTextEntry={true}
             placeholder="Password"
             style={s.input}
@@ -77,7 +82,17 @@ const SignUp = props => {
           />
         </View>
         <View style={s.section}>
-        <Button
+          <TextInput
+            editable={!config.loading}
+            secureTextEntry={true}
+            placeholder="Confirm Password"
+            style={s.input}
+            value={confirmPassword}
+            onChangeText={text => setConfirmPassword(text)}
+          />
+        </View>
+        <View style={s.section}>
+          <Button
             rounded
             disabled={config.loading}
             style={[s.center, sGlobal.button, sColor.primaryBgColor]}
@@ -91,10 +106,10 @@ const SignUp = props => {
         </View>
         <View style={[s.section]}>
           <View style={s.flexCenter}>
-          <Text>Already have an account? </Text>
-          <TouchableHighlight onPress={() => goBack()}>
-            <Text style={sColor.secondaryColor}> Login</Text>
-          </TouchableHighlight>
+            <Text>Already have an account? </Text>
+            <TouchableHighlight onPress={() => goBack()}>
+              <Text style={sColor.secondaryColor}> Login</Text>
+            </TouchableHighlight>
           </View>
         </View>
       </View>

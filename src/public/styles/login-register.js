@@ -1,10 +1,10 @@
 import {StyleSheet} from 'react-native';
-import color from '../../config';
+import color from '../../config/color';
 
 const s = StyleSheet.create({
   container: {width: '100%', paddingHorizontal: 36},
   header: {marginBottom: 25},
-  img: {width: 75, height: 75},
+  img: {width: 125, height: 125},
   register: {
     flex: 1,
     flexDirection: 'row',
@@ -19,7 +19,7 @@ const s = StyleSheet.create({
     borderRadius: 25,
     paddingVertical: 8,
     paddingHorizontal:15,
-    fontSize: 18,
+    fontSize: 16,
   },
   flexCenter: {justifyContent: 'center', alignItems: 'center', flexDirection: 'row'},
   textCenter: {textAlign: 'center'},

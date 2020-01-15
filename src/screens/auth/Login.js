@@ -1,5 +1,4 @@
-import React, {useState} from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   TextInput,
@@ -9,66 +8,65 @@ import {
 } from 'react-native';
 import {Container, Text, Button} from 'native-base';
 
-import {getDataStorage, toastr} from '../../helpers/script';
+import {toastr, getDataStorage} from '../../helpers/script';
 import s from '../../public/styles/login-register';
 import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles';
+import {firebase} from '../../config/firebase';
+import AsyncStorage from '@react-native-community/async-storage';
 
-const Login = props => {
-  const {
-    navigation: {navigate},
-  } = props;
-  getDataStorage('token', token => {
-    if (token !== null) {
-      navigate('Engineers');
-    }
-  });
-  let [user, setUser] = useState('');
-  let [password, setPassword] = useState('');
-  let [config, setConfig] = useState({
+const Login = ({navigation: {push, navigate}}) => {
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
+  const [config, setConfig] = useState({
     loading: false,
     error: false,
   });
-  const storeData = async data => {
+  const setLoggedIn = async () => {
     try {
-      await AsyncStorage.setItem('token', data.token);
-      await AsyncStorage.setItem('id', data.id);
-      await AsyncStorage.setItem('username', data.username);
-      await AsyncStorage.setItem('role', data.role);
-      navigate('Engineers');
-    } catch (err) {}
+      await AsyncStorage.setItem('loggedIn', JSON.stringify({loggedIn: true}));
+    } catch (err) {
+      toastr('Ops, something error');
+    }
+    navigate('Chat');
   };
   const loginUser = () => {
     if (!user || !password) {
       toastr('Please fill out all of this field.');
       return;
     }
-    // setConfig({loading: true, error: false});
-    // axios
-    //   .post(`${API_ENDPOINT}login`, {
-    //     user,
-    //     password,
-    //   })
-    //   .then(res => {
-    //     setConfig({loading: false, error: false});
-    //     storeData(res.data.values);
-    //   })
-    //   //err
-    //   .catch(() => {
-    //     setConfig({loading: false, error: true});
-    //     toastr('Incorrect username or password.');
-    //   });
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(user, password)
+      .then(() => {
+        setConfig({loading: false, error: false});
+        setLoggedIn();
+      })
+      .catch(() => {
+        setConfig({loading: false, error: true});
+        toastr('Invalid email or password.', 'danger');
+      });
   };
+  useEffect(() => {
+    getDataStorage('loggedIn', value => {
+      if(value !== null) {
+        navigate('Chat');
+      }
+    });
+  }, []);
   return (
     <Container style={s.center}>
       <View style={s.container}>
         <View style={[s.header, s.center]}>
-          <Image source={require('../../public/images/logo.png')} />
+          <Image
+            source={require('../../public/images/logo.png')}
+            style={s.img}
+          />
         </View>
         <View style={s.section}>
           <TextInput
             editable={!config.loading}
-            placeholder="Username or email"
+            placeholder="Email"
             style={s.input}
             value={user}
             onChangeText={text => setUser(text)}
@@ -99,10 +97,10 @@ const Login = props => {
         </View>
         <View style={[s.section]}>
           <View style={s.flexCenter}>
-          <Text>Don't have an account? </Text>
-          <TouchableHighlight onPress={() => navigate('SignUp')}>
-            <Text style={sColor.secondaryColor}> Sign Up</Text>
-          </TouchableHighlight>
+            <Text>Don't have an account? </Text>
+            <TouchableHighlight onPress={() => push('SignUp')}>
+              <Text style={sColor.secondaryColor}> Sign Up</Text>
+            </TouchableHighlight>
           </View>
         </View>
       </View>

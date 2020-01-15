@@ -1,78 +1,38 @@
 import React from 'react';
-import {Button, Text, View} from 'react-native';
 import {Root, Icon} from 'native-base';
 import {createAppContainer, createSwitchNavigator} from 'react-navigation';
 import {createStackNavigator} from 'react-navigation-stack';
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 
+import Chat from './src/screens/chat';
+import Friends from './src/screens/friends';
+import Account from './src/screens/account';
+
 import Login from './src/screens/auth/Login';
 import SignUp from './src/screens/auth/SignUp';
-
-class HomeScreen extends React.Component {
-  render() {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Home!</Text>
-        <Button
-          title="Go to Settings"
-          onPress={() => this.props.navigation.navigate('Settings')}
-        />
-        <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate('Login')}
-        />
-      </View>
-    );
-  }
-}
-
-class SettingsScreen extends React.Component {
-  render() {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Settings!</Text>
-        <Button
-          title="Go to Home"
-          onPress={() => this.props.navigation.navigate('Home')}
-        />
-        <Button
-          title="Go to Details"
-          onPress={() => this.props.navigation.navigate('Details')}
-        />
-      </View>
-    );
-  }
-}
-
-class DetailsScreen extends React.Component {
-  render() {
-    return (
-      <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-        <Text>Details!</Text>
-      </View>
-    );
-  }
-}
 
 const AuthStack = createStackNavigator({
   Login,
   SignUp,
 });
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-  Details: DetailsScreen,
+const FriendsStack = createStackNavigator({
+  Friends,
 });
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
-  Details: DetailsScreen,
+const ChatStack = createStackNavigator({
+  Chat,
+});
+
+const AccountStack = createStackNavigator({
+  Account,
 });
 
 const BottomTabNavigator = createBottomTabNavigator(
   {
-    Home: HomeStack,
-    Settings: SettingsStack,
+    Friends: FriendsStack,
+    Chat: ChatStack,
+    Account: AccountStack,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
@@ -80,11 +40,14 @@ const BottomTabNavigator = createBottomTabNavigator(
         const {routeName} = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'Home':
+          case 'Friends':
+            iconName = 'contacts';
+            break;
+          case 'Chat':
             iconName = 'chatboxes';
             break;
-          case 'Settings':
-            iconName = 'contacts';
+          case 'Account':
+            iconName = 'contact';
             break;
           default:
             iconName = 'logo-android';

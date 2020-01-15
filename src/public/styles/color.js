@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import color from '../../config';
+import color from '../../config/color';
 
 const s = StyleSheet.create({
   darkestColor: {color: color.col5},
