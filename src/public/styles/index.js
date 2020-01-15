@@ -33,6 +33,7 @@ const s = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  button: {paddingVertical: 20, marginHorizontal: 50},
   rounded: {borderRadius: 3},
   textCenter: {textAlign: 'center'},
   wFull: {width: '100%'},

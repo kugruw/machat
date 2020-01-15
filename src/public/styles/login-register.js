@@ -1,8 +1,10 @@
 import {StyleSheet} from 'react-native';
+import color from '../../config';
 
 const s = StyleSheet.create({
   container: {width: '100%', paddingHorizontal: 36},
-  header: {marginBottom: 48},
+  header: {marginBottom: 25},
+  img: {width: 75, height: 75},
   register: {
     flex: 1,
     flexDirection: 'row',
@@ -12,11 +14,14 @@ const s = StyleSheet.create({
   picker: {width: 150, height: 24},
   section: {marginVertical: 15},
   input: {
-    borderColor: 'rgba(0, 98, 204, .8)',
-    borderBottomWidth: 0.5,
-    paddingVertical: 4,
+    borderColor: color.col2,
+    borderWidth: 1,
+    borderRadius: 25,
+    paddingVertical: 8,
+    paddingHorizontal:10,
     fontSize: 18,
   },
+  flexCenter: {justifyContent: 'center', alignItems: 'center', flexDirection: 'row'},
   textCenter: {textAlign: 'center'},
   center: {
     justifyContent: 'center',
