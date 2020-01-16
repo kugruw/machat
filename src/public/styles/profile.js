@@ -1,5 +1,5 @@
 import {StyleSheet} from 'react-native';
-import color from '../../config';
+import color from '../../config/color';
 
 const s = StyleSheet.create({
   imgCover: {
@@ -21,8 +21,8 @@ const s = StyleSheet.create({
     borderWidth: 2.5,
   },
   defaultImg: {
-    width: 25,
-    height: 25,
+    width: 70,
+    height: 70,
   },
   listInput: {
     flexWrap: 'wrap',

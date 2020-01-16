@@ -1,16 +1,16 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from 'react';
+import {View, Text} from 'react-native';
 
 const ChangeEmail = () => {
-    return (
-        <View>
-            <Text>Email</Text>
-        </View>
-    )
-}
+  return (
+    <View>
+      <Text>Email</Text>
+    </View>
+  );
+};
 
 ChangeEmail.navigationOptions = {
-    title: 'Change Email',
-  };
+  title: 'Change Email',
+};
 
-export default ChangeEmail
+export default ChangeEmail;

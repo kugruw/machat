@@ -26,6 +26,7 @@ const sessionCheck = async callback => {
   callback(data);
 };
 
+// Dont use it, ise AsyncStorage with promise instead
 const clearSession = async callback => {
   try {
     await AsyncStorage.clear();
@@ -38,6 +39,7 @@ const clearSession = async callback => {
   }
 };
 
+// Dont use it, ise AsyncStorage with promise instead
 const removeDataStorage = async (item, callback) => {
   try {
     await AsyncStorage.removeItem(item);
@@ -51,6 +53,7 @@ const removeDataStorage = async (item, callback) => {
   }
 };
 
+// Dont use it, ise AsyncStorage with promise instead
 const getDataStorage = async (item, callback) => {
   try {
     const value = await AsyncStorage.getItem(item);
@@ -62,6 +65,7 @@ const getDataStorage = async (item, callback) => {
   }
 };
 
+// Dont use it, ise AsyncStorage with promise instead
 const getMultipleDataStorage = async (item, callback) => {
   let value;
   try {

@@ -6,7 +6,7 @@ import {
   Image,
   TouchableHighlight,
 } from 'react-native';
-import {Container, H1, Text, Button} from 'native-base';
+import {Container, Text, Button} from 'native-base';
 import s from '../../public/styles/login-register';
 import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles';
@@ -37,7 +37,7 @@ const SignUp = ({navigation: {goBack}}) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(({user}) => {
-        db.ref('users/').push({[user.uid] : {email : user.email}}, err => {
+        db.ref(`users/${user.uid}`).set({email : user.email, username: '', name: user.email.split('@', 1)[0], status: ''}, err => {
           if (!err) {
             setConfig({loading: false, error: false});
             toastr(

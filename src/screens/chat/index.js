@@ -9,4 +9,8 @@ const Index = () => {
   );
 };
 
+Index.navigationOptions = {
+  title: 'Chat',
+};
+
 export default Index;

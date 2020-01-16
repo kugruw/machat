@@ -29,8 +29,9 @@ import {
   clearSession,
 } from '../../helpers/script';
 import {firebase} from '../../config/firebase';
+import AsyncStorage from '@react-native-community/async-storage';
 
-export default function Profile({navigation: {navigate, push}}) {
+export default function Account({navigation: {navigate, push}}) {
   let [deleteModal, setDeleteModal] = useState(false);
   let [config, setConfig] = useState({error: false, loading: false});
   // useEffect(() => {
@@ -47,10 +48,8 @@ export default function Profile({navigation: {navigate, push}}) {
   // }, []);
   const logout = () => {
     firebase.auth().signOut().then(() => {
-      removeDataStorage('loggedIn', err => {
-        if(!err) {
-          props.navigation.navigate('Login');
-        }
+      AsyncStorage.removeItem('loggedIn').then(() => {
+        navigate('Login');
       });
     });
   };
@@ -110,7 +109,7 @@ export default function Profile({navigation: {navigate, push}}) {
         </View>
       </Modal>
       <Content>
-        <View style={[sColor.secondaryBgColor, s.banner]}>
+        {/* <View style={[sColor.secondaryBgColor, s.banner]}>
           <View style={[sGlobal.center, s.imgContainer]}>
             <View style={s.imgView}>
               <ImageBackground
@@ -133,7 +132,7 @@ export default function Profile({navigation: {navigate, push}}) {
           <TextMedium style={[sGlobal.textCenter, sColor.lightColor]}>
             {'william'}
           </TextMedium>
-        </View>
+        </View> */}
         <List style={s.listContainer}>
           <ListItem itemDivider style={sColor.lightBgColor}>
             <Text>Settings</Text>
@@ -176,6 +175,10 @@ export default function Profile({navigation: {navigate, push}}) {
     </Container>
   );
 }
+
+Account.navigationOptions = {
+  title: 'Account',
+};
 
 const s = StyleSheet.create({
   modal: {
@@ -235,19 +238,4 @@ const ListArrow = ({children, icon, style, last, handlePress}) => {
       </ListItem>
     </View>
   );
-};
-
-// profile - delete (method)
-
-Profile.navigationOptions = {
-  headerStyle: {
-    backgroundColor: color.col4,
-    elevation: 0,
-    shadowOpacity: 0,
-  },
-  headerTintColor: color.light,
-  headerTitleStyle: {
-    fontWeight: 'bold',
-  },
-  headerTransparent: true,
 };

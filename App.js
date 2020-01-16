@@ -18,36 +18,21 @@ import Profile from './src/screens/account/Profile';
 import Login from './src/screens/auth/Login';
 import SignUp from './src/screens/auth/SignUp';
 
-const AuthStack = createStackNavigator({
-  Login,
-  SignUp,
-});
-
 const FriendsStack = createStackNavigator(
-  {
-    Friends,
-  },
+  {Friends},
   {defaultNavigationOptions},
 );
-
-const ChatStack = createStackNavigator(
-  {
-    Chat,
-  },
+const ChatStack = createStackNavigator({Chat}, {defaultNavigationOptions});
+const AccountStack = createStackNavigator(
+  {Account},
   {defaultNavigationOptions},
 );
-
-const AccountStack = createStackNavigator({
-  Account,
-  ChangePassword,
-  ChangeEmail,
-});
 
 const BottomTabNavigator = createBottomTabNavigator(
   {
-    Friends: FriendsStack,
-    Chat: ChatStack,
-    Account: AccountStack,
+    FriendsStack,
+    ChatStack,
+    AccountStack,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
@@ -55,13 +40,13 @@ const BottomTabNavigator = createBottomTabNavigator(
         const {routeName} = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'Friends':
+          case 'FriendsStack':
             iconName = 'contacts';
             break;
-          case 'Chat':
+          case 'ChatStack':
             iconName = 'chatboxes';
             break;
-          case 'Account':
+          case 'AccountStack':
             iconName = 'contact';
             break;
           default:
@@ -80,24 +65,42 @@ const BottomTabNavigator = createBottomTabNavigator(
       activeTintColor: color.col5,
       inactiveTintColor: color.regularGray,
     },
+    initialRouteName: 'ChatStack',
+    navigationOptions: {headerShown: false},
   },
 );
 
-const AppContainer = createAppContainer(
-  createSwitchNavigator(
-    {
-      Auth: AuthStack,
-      BottomTabNavigator,
-    },
-    {initialRouteName: 'Auth'},
-  ),
+const Auth = createStackNavigator({
+  Login,
+  SignUp,
+});
+
+const Main = createStackNavigator(
+  {
+    BottomTabNavigator,
+    ChangePassword,
+    ChangeEmail,
+    Profile,
+  },
+  {defaultNavigationOptions},
 );
+
+const AppContainer = createAppContainer(
+  createSwitchNavigator({
+    Auth,
+    Main,
+  }),
+);
+
+import {Provider} from './src/context';
 
 const App = () => {
   return (
-    <Root>
-      <AppContainer />
-    </Root>
+    <Provider>
+      <Root>
+        <AppContainer />
+      </Root>
+    </Provider>
   );
 };
 

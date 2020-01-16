@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text} from 'react-native';
 
-const index = () => {
+const Index = () => {
   return (
     <View>
       <Text>Friend</Text>
@@ -9,4 +9,8 @@ const index = () => {
   );
 };
 
-export default index;
+Index.navigationOptions = {
+  title: 'Friends',
+};
+
+export default Index;
