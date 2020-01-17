@@ -9,7 +9,7 @@ export const ButtonPrimary = ({text, children, disabled, handleSubmit}) => {
     <View style={s.button}>
       <Button
         disabled={disabled}
-        style={[sGlobal.center, sColor.secondaryBgColor]}
+        style={[sGlobal.center, sColor.primaryBgColor]}
         onPress={handleSubmit}>
         {children ? children : <Text>{text}</Text>}
       </Button>

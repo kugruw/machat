@@ -1,6 +1,5 @@
 import {StyleSheet} from 'react-native';
 import color from '../../config/color';
-
 const s = StyleSheet.create({
   imgCover: {
     height: 150,
@@ -17,7 +16,7 @@ const s = StyleSheet.create({
     height: 75,
     marginTop: -75 / 2,
     borderRadius: 75 / 2,
-    borderColor: color.secondary,
+    borderColor: color.col2,
     borderWidth: 2.5,
   },
   defaultImg: {

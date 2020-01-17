@@ -1,12 +1,14 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import {StyleSheet, ActivityIndicator} from 'react-native';
 import {Container, Content, Text, Form, Item, Input, Label} from 'native-base';
 import {ButtonPrimary} from '../../components/Button';
 import {toastr} from '../../helpers/script';
 import color from '../../config/color';
+import {firebase} from '../../config/firebase';
+import RootContext from '../../context';
 
-const ChangePassword = props => {
-  // const {email} = props.navigation.state.params;
+const ChangePassword = () => {
+  const {user: {data}} = useContext(RootContext);
   const [old_password, setOld_password] = useState('');
   const [new_password, setNew_password] = useState('');
   const [confirm_password, setConfirm_password] = useState('');
@@ -21,22 +23,27 @@ const ChangePassword = props => {
       toastr("Confirm password doesn't match.");
       return;
     }
-    // setConfig({loading: true, error: false});
-    // axios
-    //   .patch(`${API_ENDPOINT}auth/profile-change-password`, {
-    //     email,
-    //     old_password,
-    //     new_password,
-    //   })
-    //   .then(() => {
-    //     setConfig({loading: false, error: false});
-    //     toastr('Password successfully changed.', 'success');
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     setConfig({loading: false, error: true});
-    //     toastr('Invalid old password.', 'danger');
-    //   });
+    setConfig({loading: true, error: false});
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(data.email, old_password)
+      .then(() => {
+        const user = firebase.auth().currentUser;
+        user
+          .updatePassword(new_password)
+          .then(() => {
+            setConfig({loading: false, error: false});
+            toastr('Password successfully changed.', 'success');
+          })
+          .catch(err => {
+            setConfig({loading: false, error: true});
+            toastr(err.message, 'danger');
+          });
+      })
+      .catch(() => {
+        setConfig({loading: false, error: true});
+        toastr('Invalid old password.', 'danger');
+      });
   };
   return (
     <Container>

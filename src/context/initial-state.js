@@ -1,9 +1,10 @@
 const user = {
-  uid: undefined,
   email: '',
   username: '',
   name: '',
-  status: '',
+  status: 'Sibuk',
+  avatar: '',
+  cover: '',
 };
 
 const initialState = {

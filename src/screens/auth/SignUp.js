@@ -12,6 +12,7 @@ import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles';
 import {toastr} from '../../helpers/script';
 
+import initialState from '../../context/initial-state';
 import db, {firebase} from '../../config/firebase';
 
 const SignUp = ({navigation: {goBack}}) => {
@@ -37,7 +38,7 @@ const SignUp = ({navigation: {goBack}}) => {
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(({user}) => {
-        db.ref(`users/${user.uid}`).set({email : user.email, username: '', name: user.email.split('@', 1)[0], status: ''}, err => {
+        db.ref(`users/${user.uid}`).set({...initialState.user, email : user.email, name: user.email.split('@', 1)[0]}, err => {
           if (!err) {
             setConfig({loading: false, error: false});
             toastr(
@@ -49,6 +50,7 @@ const SignUp = ({navigation: {goBack}}) => {
         });
       })
       .catch(err => {
+        console.log(err);
         setConfig({loading: false, error: true});
         toastr(err.message, 'danger');
       });

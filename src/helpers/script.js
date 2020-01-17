@@ -12,6 +12,7 @@ const toastr = (message, type) => {
   Toast.show({
     text: message,
     buttonText: 'Okay',
+    duration: 3000,
     type,
   });
 };

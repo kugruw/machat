@@ -16,62 +16,61 @@ import s from '../../public/styles/profile';
 import color from '../../config/color';
 import {ButtonPrimary} from '../../components/Button';
 import {toastr, showImagePicker} from '../../helpers/script';
-// import FormData from 'form-data';
 import RootContext from '../../context';
+import db, {firebase} from '../../config/firebase';
 
 const Profile = () => {
   const {user} = React.useContext(RootContext);
-  // Cek snapshot
-  const [data, setData] = useState(JSON.parse(JSON.stringify(user)));
+  const [data, setData] = useState({});
   const [config, setConfig] = useState({error: false, loading: false});
+
+  useEffect(() => {
+    setData(user.data);
+  }, [user]);
+
   const handleSubmit = () => {
-    // setConfig({loading: true, error: false});
-    // axios
-    //   .patch(
-    //     `${API_ENDPOINT}profile`,
-    //     {
-    //       ...data,
-    //     },
-    //   )
-    //   .then(() => {
-    //     setConfig({loading: false, error: false});
-    //     toastr('Profile successfully updated.', 'success');
-    //     navigation.navigate('Account', {update: Math.random()});
-    //   })
-    //   .catch(() => {
-    //     setConfig({loading: false, error: true});
-    //     toastr('Failed to save profile.', 'danger');
-    //   });
-  };
-  const pickImage = photo => {
-    showImagePicker(res => {
-      const {fileName, type, uri} = res;
-      // const form = new FormData();
-      // form.append('user_id', data.user_id);
-      // form.append('image', {uri, type, name: fileName});
-      // setConfig({loading: true, error: false});
-      // axios
-      //   .patch(
-      //     `${API_ENDPOINT}profile/upload-${photo}`,
-      //     form,
-      //   )
-      //   .then(() => {
-      //     setConfig({loading: false, error: false});
-      //     toastr('Profile successfully updated.', 'success');
-      //     navigation.navigate('Account', {update: Math.random()});
-      //   })
-      //   .catch(() => {
-      //     setConfig({loading: false, error: true});
-      //     toastr('Failed to save profile. Check your network.', 'danger');
-      //   });
+    setConfig({loading: true, error: false});
+    db.ref(`users/${user.uid}`).set(data, err => {
+      if (err) {
+        setConfig({loading: false, error: true});
+        toastr('Failed to save profile.', 'danger');
+      } else {
+        setConfig({loading: false, error: false});
+        toastr('Profile successfully updated.', 'success');
+      }
     });
   };
+
+  const pickImage = photo => {
+    showImagePicker(async ({uri, fileName}) => {
+      const ref = firebase.storage().ref();
+      const blob = await (await fetch(uri)).blob();
+      ref
+        .child(`images/${photo}/${fileName + '_' + user.id}`)
+        .put(blob)
+        .then(({ref}) => {
+          ref.getDownloadURL().then(value => {
+            db.ref(`users/${user.uid}/${photo}`).set(value, err => {
+              if(!err) {
+                setConfig({loading: false, error: false});
+                toastr('Profile successfully updated.', 'success');
+              }
+            });
+          });
+        })
+        .catch(() => {
+          setConfig({loading: false, error: true});
+          toastr('Failed to save profile. Check your network.', 'danger');
+        });
+    });
+  };
+
   return (
     <Container>
       <Content>
         <ImageBackground
-          source={{uri: `${''}images/store/${'file.png'}`}}
-          style={[s.imgCover, sColor.primaryBgColor]}>
+          source={{uri: data.cover || '../../public/images/user2.png'}}
+          style={[s.imgCover, sColor.secondaryBgColor]}>
           <Button
             transparent
             light
@@ -82,13 +81,13 @@ const Profile = () => {
         </ImageBackground>
         <View style={sGlobal.center}>
           <ImageBackground
-            source={{uri: `${''}images/profile/${'pp.png'}`}}
+            source={{uri: data.avatar || '../../public/images/user2.png'}}
             imageStyle={s.imgProfileStyle}
             style={[s.imgProfile, sGlobal.center, sColor.lightBgColor]}>
-            <Button transparent onPress={() => pickImage('pp')}>
+            <Button transparent onPress={() => pickImage('avatar')}>
               <Image
                 source={require('../../public/images/user2.png')}
-                style={[s.defaultImg, undefined && s.invisible]}
+                style={[s.defaultImg, data.avatar && s.invisible]}
               />
             </Button>
           </ImageBackground>
@@ -96,17 +95,24 @@ const Profile = () => {
         <Form>
           <Item stackedLabel>
             <Label>Username</Label>
-            <Input value={data.username} onChangeText={text => setData({...data, username: text})} />
+            <Input
+              value={data.username}
+              onChangeText={text => setData({...data, username: text})}
+            />
           </Item>
           <Item stackedLabel>
             <Label>Name</Label>
-            <Input value={data.name} onChangeText={text => setData({...data, name: text})} />
+            <Input
+              value={data.name}
+              onChangeText={text => setData({...data, name: text})}
+            />
           </Item>
           <Item stackedLabel>
             <Label>Status</Label>
             <Input
               multiline={true}
-              value={data.status} onChangeText={text => setData({...data, status: text})}
+              value={data.status}
+              onChangeText={text => setData({...data, status: text})}
             />
           </Item>
           <ButtonPrimary text="Save" handleSubmit={handleSubmit} />

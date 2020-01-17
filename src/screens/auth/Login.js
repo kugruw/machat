@@ -35,6 +35,7 @@ const Login = ({navigation: {push, navigate}}) => {
       toastr('Please fill out all of this field.');
       return;
     }
+    setConfig({loading: true, error: false});
     firebase
       .auth()
       .signInWithEmailAndPassword(user, password)

@@ -38,6 +38,7 @@ const s = StyleSheet.create({
   textCenter: {textAlign: 'center'},
   wFull: {width: '100%'},
   w1_2: {width: '50%'},
+  bgOpacity: {backgroundColor: 'rgba(0, 0, 0, .7)'},
 });
 
 export default s;
