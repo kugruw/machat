@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text as TextMedium, View} from 'react-native';
+import {StyleSheet, Text as TextMedium, View, TextInput} from 'react-native';
 import {Text, H3, Button} from 'native-base';
 import Modal from 'react-native-modal';
 import sGlobal from '../public/styles';
@@ -49,31 +49,31 @@ const BottomModal = props => {
     <Modal
       onBackButtonPress={props.onClose}
       onBackdropPress={props.onClose}
-      animationIn="pulse"
-      animationOut="fadeOut"
+      animationIn="slideInUp"
+      animationOut="slideOutDown"
       isVisible={props.visible}
-      style={{position: 'absolute', bottom: 0, margin: 0}}>
-      <View style={[sColor.lightBgColor, s.modal]}>
+      style={s.bottomModalContainer}>
+      <View style={[sColor.lightBgColor, s.modal, s.bottomModal]}>
         <View>
-          <H3 style={[sColor.dangerColor, sGlobal.textCenter]}>
+          <H3 style={[sColor.secondaryColor, sGlobal.textCenter]}>
             {props.title || 'Alert'}
           </H3>
           <TextMedium style={[sGlobal.textCenter, s.modalMessage]}>
             {props.message || 'Ops'}
           </TextMedium>
+          {props.children}
           <View>
             <View style={sGlobal.flexRow}>
-              <Button
-                danger
-                style={[sGlobal.w1_2, sGlobal.center, s.modalButton]}
-                onPress={props.onSubmit}>
-                <Text>{props.submitButtonText || 'Oke'}</Text>
-              </Button>
               <Button
                 light
                 style={[sGlobal.w1_2, sGlobal.center, s.modalButton]}
                 onPress={props.onClose}>
                 <Text>{props.closeButtonText || 'Close'}</Text>
+              </Button>
+              <Button
+                style={[sGlobal.w1_2, sGlobal.center, s.modalButton, sColor.primaryBgColor]}
+                onPress={props.onSubmit}>
+                <Text>{props.submitButtonText || 'Oke'}</Text>
               </Button>
             </View>
           </View>
@@ -85,7 +85,7 @@ const BottomModal = props => {
 
 const s = StyleSheet.create({
   modal: {
-    paddingVertical: 24,
+    paddingTop: 24,
   },
   modalMessage: {
     paddingTop: 20,
@@ -94,6 +94,8 @@ const s = StyleSheet.create({
   modalButton: {
     borderRadius: 0,
   },
+  bottomModal: {position: 'absolute', bottom: 0},
+  bottomModalContainer: {margin: 0, position: 'relative'},
 });
 
 export {DangerModal, BottomModal};
