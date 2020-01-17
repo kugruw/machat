@@ -15,6 +15,7 @@ import sGlobal from '../../public/styles/';
 import s from '../../public/styles/profile';
 import color from '../../config/color';
 import {ButtonPrimary} from '../../components/Button';
+import Loader from '../../components/Loader';
 import {toastr, showImagePicker} from '../../helpers/script';
 import RootContext from '../../context';
 import db, {firebase} from '../../config/firebase';
@@ -45,13 +46,14 @@ const Profile = () => {
     showImagePicker(async ({uri, fileName}) => {
       const ref = firebase.storage().ref();
       const blob = await (await fetch(uri)).blob();
+      setConfig({loading: true, error: false});
       ref
         .child(`images/${photo}/${fileName + '_' + user.id}`)
         .put(blob)
         .then(({ref}) => {
           ref.getDownloadURL().then(value => {
             db.ref(`users/${user.uid}/${photo}`).set(value, err => {
-              if(!err) {
+              if (!err) {
                 setConfig({loading: false, error: false});
                 toastr('Profile successfully updated.', 'success');
               }
@@ -66,7 +68,7 @@ const Profile = () => {
   };
 
   return (
-    <Container>
+    <Container style={sGlobal.relative}>
       <Content>
         <ImageBackground
           source={{uri: data.cover || '../../public/images/user2.png'}}
@@ -118,6 +120,7 @@ const Profile = () => {
           <ButtonPrimary text="Save" handleSubmit={handleSubmit} />
         </Form>
       </Content>
+      {config.loading && <Loader text="Updating profile" />}
     </Container>
   );
 };

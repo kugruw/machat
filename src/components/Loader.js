@@ -1,11 +1,15 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View, ActivityIndicator} from 'react-native';
+import {Text} from 'native-base';
 import sGlobal from '../public/styles';
 
-const Loader = () => {
+const Loader = ({text = 'Loading'}) => {
   return (
-    <View style={[sGlobal.wFull, sGlobal.bgOpacity, sGlobal.center]}>
-      <Text>loading</Text>
+    <View style={[sGlobal.full, sGlobal.bgOpacity, sGlobal.center]}>
+      <View>
+        <ActivityIndicator size="large" color="#fff" />
+        <Text style={[sGlobal.mt, sGlobal.lightColor]}>{text}</Text>
+      </View>
     </View>
   );
 };

@@ -1,57 +1,36 @@
 import React, {useState, useEffect} from 'react';
-import {
-  StyleSheet,
-  Text as TextMedium,
-  View,
-  ImageBackground,
-} from 'react-native';
+import {StyleSheet, View, ImageBackground} from 'react-native';
 import {
   Container,
   Content,
   Text,
-  H2,
-  H3,
   List,
   ListItem,
   Left,
   Body,
   Right,
   Icon,
-  Button,
 } from 'native-base';
-import Modal from 'react-native-modal';
 import sGlobal from '../../public/styles';
 import sColor from '../../public/styles/color';
 import color from '../../config/color';
-import {
-  removeDataStorage,
-  toastr,
-  clearSession,
-} from '../../helpers/script';
+import {DangerModal} from '../../components/Modal';
+import {removeDataStorage, toastr, clearSession} from '../../helpers/script';
 import {firebase} from '../../config/firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 
 export default function Account({navigation: {navigate, push}}) {
-  let [deleteModal, setDeleteModal] = useState(false);
-  let [config, setConfig] = useState({error: false, loading: false});
-  // useEffect(() => {
-  //   axios
-  //       .get(`${API_ENDPOINT}profile/${id}`)
-  //       .then(res => {
-  //         setConfig({loading: false, error: false});
-  //         setData({...res.data.data[0], token});
-  //       })
-  //       .catch(() => {
-  //         setConfig({loading: false, error: true});
-  //         toastr('Ops, network error');
-  //       });
-  // }, []);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [config, setConfig] = useState({error: false, loading: false});
   const logout = () => {
-    firebase.auth().signOut().then(() => {
-      AsyncStorage.removeItem('loggedIn').then(() => {
-        navigate('Login');
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        AsyncStorage.removeItem('loggedIn').then(() => {
+          navigate('Login');
+        });
       });
-    });
   };
   const deleteAccount = () => {
     // axios
@@ -75,39 +54,14 @@ export default function Account({navigation: {navigate, push}}) {
   };
   return (
     <Container>
-      <Modal
-        onBackButtonPress={() => setDeleteModal(false)}
-        onBackdropPress={() => setDeleteModal(false)}
-        animationIn="pulse"
-        animationOut="fadeOut"
-        isVisible={deleteModal}>
-        <View style={[sColor.lightBgColor, s.modal]}>
-          <View>
-            <H3 style={[sColor.dangerColor, sGlobal.textCenter]}>
-              Delete Account
-            </H3>
-            <TextMedium style={[sGlobal.textCenter, s.modalMessage]}>
-              Are you sure to delete this account?
-            </TextMedium>
-            <View>
-              <View style={sGlobal.flexRow}>
-                <Button
-                  danger
-                  style={[sGlobal.w1_2, sGlobal.center, s.modalButton]}
-                  onPress={deleteAccount}>
-                  <Text>Delete</Text>
-                </Button>
-                <Button
-                  light
-                  style={[sGlobal.w1_2, sGlobal.center, s.modalButton]}
-                  onPress={() => setDeleteModal(false)}>
-                  <Text>Cancel</Text>
-                </Button>
-              </View>
-            </View>
-          </View>
-        </View>
-      </Modal>
+      <DangerModal
+        title="Delete Account"
+        message="Are you sure to delete this account?"
+        submitButtonText="Delete"
+        visible={deleteModal}
+        onClose={() => setDeleteModal(false)}
+        onSubmit={deleteAccount}
+      />
       <Content>
         {/* <View style={[sColor.secondaryBgColor, s.banner]}>
           <View style={[sGlobal.center, s.imgContainer]}>
@@ -143,9 +97,7 @@ export default function Account({navigation: {navigate, push}}) {
           <ListArrow icon="mail" handlePress={() => push('ChangeEmail')}>
             Email
           </ListArrow>
-          <ListArrow
-            icon="key"
-            handlePress={() => push('ChangePassword')}>
+          <ListArrow icon="key" handlePress={() => push('ChangePassword')}>
             Password
           </ListArrow>
           <ListArrow
@@ -181,16 +133,6 @@ Account.navigationOptions = {
 };
 
 const s = StyleSheet.create({
-  modal: {
-    paddingVertical: 24,
-  },
-  modalMessage: {
-    paddingTop: 20,
-    paddingBottom: 20 * 2,
-  },
-  modalButton: {
-    borderRadius: 0,
-  },
   banner: {
     paddingVertical: 48,
   },

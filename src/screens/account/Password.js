@@ -8,7 +8,9 @@ import {firebase} from '../../config/firebase';
 import RootContext from '../../context';
 
 const ChangePassword = () => {
-  const {user: {data}} = useContext(RootContext);
+  const {
+    user: {data},
+  } = useContext(RootContext);
   const [old_password, setOld_password] = useState('');
   const [new_password, setNew_password] = useState('');
   const [confirm_password, setConfirm_password] = useState('');
@@ -52,6 +54,7 @@ const ChangePassword = () => {
           <Item stackedLabel>
             <Label>Old Password</Label>
             <Input
+              disabled={config.loading}
               style={s.fontSize}
               secureTextEntry
               value={old_password}
@@ -61,6 +64,7 @@ const ChangePassword = () => {
           <Item stackedLabel>
             <Label>New Password</Label>
             <Input
+              disabled={config.loading}
               style={s.fontSize}
               secureTextEntry
               value={new_password}
@@ -70,13 +74,14 @@ const ChangePassword = () => {
           <Item stackedLabel>
             <Label>Confirm New Password</Label>
             <Input
+              disabled={config.loading}
               style={s.fontSize}
               secureTextEntry
               value={confirm_password}
               onChangeText={text => setConfirm_password(text)}
             />
           </Item>
-          <ButtonPrimary handleSubmit={handleSubmit}>
+          <ButtonPrimary disabled={config.loading} handleSubmit={handleSubmit}>
             {config.loading ? (
               <ActivityIndicator size="large" color={color.light} />
             ) : (
