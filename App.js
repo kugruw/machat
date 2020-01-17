@@ -8,7 +8,10 @@ import {defaultNavigationOptions} from './src/config/navigation';
 import {color} from './src/config/color';
 
 import Chat from './src/screens/chat';
+
 import Friends from './src/screens/friends';
+import SearchFriends from './src/screens/friends/Search';
+import FriendsLocation from './src/screens/friends/Location';
 
 import Account from './src/screens/account';
 import ChangePassword from './src/screens/account/Password';
@@ -18,21 +21,11 @@ import Profile from './src/screens/account/Profile';
 import Login from './src/screens/auth/Login';
 import SignUp from './src/screens/auth/SignUp';
 
-const FriendsStack = createStackNavigator(
-  {Friends},
-  {defaultNavigationOptions},
-);
-const ChatStack = createStackNavigator({Chat}, {defaultNavigationOptions});
-const AccountStack = createStackNavigator(
-  {Account},
-  {defaultNavigationOptions},
-);
-
 const BottomTabNavigator = createBottomTabNavigator(
   {
-    FriendsStack,
-    ChatStack,
-    AccountStack,
+    Friends,
+    Chat,
+    Account,
   },
   {
     defaultNavigationOptions: ({navigation}) => ({
@@ -40,13 +33,13 @@ const BottomTabNavigator = createBottomTabNavigator(
         const {routeName} = navigation.state;
         let iconName;
         switch (routeName) {
-          case 'FriendsStack':
+          case 'Friends':
             iconName = 'contacts';
             break;
-          case 'ChatStack':
+          case 'Chat':
             iconName = 'chatboxes';
             break;
-          case 'AccountStack':
+          case 'Account':
             iconName = 'contact';
             break;
           default:
@@ -65,7 +58,7 @@ const BottomTabNavigator = createBottomTabNavigator(
       activeTintColor: color.col5,
       inactiveTintColor: color.regularGray,
     },
-    initialRouteName: 'ChatStack',
+    initialRouteName: 'Chat',
     navigationOptions: {headerShown: false},
   },
 );
@@ -78,6 +71,8 @@ const Auth = createStackNavigator({
 const Main = createStackNavigator(
   {
     BottomTabNavigator,
+    SearchFriends,
+    FriendsLocation,
     ChangePassword,
     ChangeEmail,
     Profile,

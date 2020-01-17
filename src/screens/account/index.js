@@ -14,6 +14,7 @@ import {
 import sGlobal from '../../public/styles';
 import sColor from '../../public/styles/color';
 import color from '../../config/color';
+import Header from '../../components/Header';
 import {DangerModal} from '../../components/Modal';
 import {removeDataStorage, toastr, clearSession} from '../../helpers/script';
 import {firebase} from '../../config/firebase';
@@ -62,6 +63,7 @@ export default function Account({navigation: {navigate, push}}) {
         onClose={() => setDeleteModal(false)}
         onSubmit={deleteAccount}
       />
+      <Header title="Account" />
       <Content>
         {/* <View style={[sColor.secondaryBgColor, s.banner]}>
           <View style={[sGlobal.center, s.imgContainer]}>

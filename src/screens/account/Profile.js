@@ -127,7 +127,6 @@ const Profile = () => {
 
 Profile.navigationOptions = {
   title: 'Profile',
-  headerTransparent: true,
 };
 
 // hapus cuy
