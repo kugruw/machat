@@ -7,8 +7,11 @@ const user = {
   cover: '',
 };
 
+const friends = {};
+
 const initialState = {
     user,
+    friends,
 };
 
 export default initialState;

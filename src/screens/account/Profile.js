@@ -22,7 +22,7 @@ import RootContext from '../../context';
 import db, {firebase} from '../../config/firebase';
 
 const Profile = () => {
-  const {user} = React.useContext(RootContext);
+  const {user, friends} = React.useContext(RootContext);
   const [data, setData] = useState(user.data);
   const [config, setConfig] = useState({error: false, loading: false});
 

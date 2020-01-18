@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {StyleSheet, View, Text as TextMedium, TextInput} from 'react-native';
 import {
   Container,
@@ -11,13 +11,22 @@ import {
   Body,
   Thumbnail,
 } from 'native-base';
-import {Friends as FriendsHeader} from '../../components/Header';
+import {Friends as FriendsHeader, Friends} from '../../components/Header';
 import ss from '../../public/styles';
 import color from '../../config/color';
+import RootContext from '../../context';
+import db from '../../config/firebase';
 
 const thumbnailSize = 50;
 
 const Index = props => {
+  const {friends} = React.useContext(RootContext);
+  const [data, setData] = useState(friends);
+
+  useEffect(() => {
+    setData(friends);
+  }, [friends]);
+
   return (
     <Container>
       <FriendsHeader {...props} />
@@ -31,22 +40,14 @@ const Index = props => {
         </View>
         <View>
           <List>
-            <ListItem avatar noBorder>
-              <Left style={s.thumbnailContainer}>
-                <Thumbnail
-                  style={s.thumbnail}
-                  source={require('../../public/images/user2.png')}
-                />
-              </Left>
-              <Body>
-                <View>
-                  <Text>Kumar Pratik</Text>
-                  <Text note ellipsizeMode="tail" numberOfLines={1}>
-                    Doing what you like will always keep you happy
-                  </Text>
-                </View>
-              </Body>
-            </ListItem>
+            {Object.keys(data).map((key, i) => (
+              <Friend
+                key={i}
+                name={data[key].name}
+                status={data[key].status}
+                thumbnail={data[key].avatar}
+              />
+            ))}
           </List>
         </View>
       </Content>
@@ -54,9 +55,38 @@ const Index = props => {
   );
 };
 
+const Friend = props => {
+  return (
+    <ListItem avatar noBorder>
+      <Left style={s.thumbnailContainer}>
+        <Thumbnail
+          style={s.thumbnail}
+          source={
+            props.thumbnail
+              ? {uri: props.thumbnail}
+              : require('../../public/images/user2.png')
+          }
+        />
+      </Left>
+      <Body>
+        <View>
+          <Text>{props.name}</Text>
+          <Text note ellipsizeMode="tail" numberOfLines={1}>
+            {props.status}
+          </Text>
+        </View>
+      </Body>
+    </ListItem>
+  );
+};
+
 const s = StyleSheet.create({
   thumbnail: {width: thumbnailSize, height: thumbnailSize},
-  thumbnailContainer: {justifyContent: 'center', paddingTop: 12, paddingBottom: 12},
+  thumbnailContainer: {
+    justifyContent: 'center',
+    paddingTop: 12,
+    paddingBottom: 12,
+  },
   content: {
     paddingHorizontal: 20,
   },

@@ -83,7 +83,7 @@ const Card = props => {
     <View style={[ss.lightBgColor, ss.shadow, s.card]}>
       <View style={ss.center}>
         <View>
-          <Image source={{uri: props.imgUri}} style={s.img} />
+          <Image source={props.imgUri ? {uri: props.imgUri} : require('../../public/images/user2.png')} style={s.img} />
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
