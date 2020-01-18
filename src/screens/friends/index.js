@@ -46,6 +46,7 @@ const Index = props => {
                 name={data[key].name}
                 status={data[key].status}
                 thumbnail={data[key].avatar}
+                handlePress={() => props.navigation.navigate('FriendProfile', data[key])}
               />
             ))}
           </List>
@@ -57,7 +58,7 @@ const Index = props => {
 
 const Friend = props => {
   return (
-    <ListItem avatar noBorder>
+    <ListItem avatar noBorder onPress={props.handlePress}>
       <Left style={s.thumbnailContainer}>
         <Thumbnail
           style={s.thumbnail}

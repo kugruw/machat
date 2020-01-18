@@ -12,6 +12,7 @@ import Chat from './src/screens/chat';
 import Friends from './src/screens/friends';
 import SearchFriends from './src/screens/friends/Search';
 import FriendsLocation from './src/screens/friends/Location';
+import FriendProfile from './src/screens/friends/Profile';
 
 import Account from './src/screens/account';
 import ChangePassword from './src/screens/account/Password';
@@ -73,6 +74,7 @@ const Main = createStackNavigator(
     BottomTabNavigator,
     SearchFriends,
     FriendsLocation,
+    FriendProfile,
     ChangePassword,
     ChangeEmail,
     Profile,
