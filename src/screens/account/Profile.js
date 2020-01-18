@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, ImageBackground, Image} from 'react-native';
+import {Clipboard, View, ImageBackground, Image} from 'react-native';
 import {
   Container,
   Content,
@@ -9,6 +9,7 @@ import {
   Form,
   Item,
   Label,
+  Icon,
 } from 'native-base';
 import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles/';
@@ -19,10 +20,11 @@ import Loader from '../../components/Loader';
 import {toastr, showImagePicker} from '../../helpers/script';
 import RootContext from '../../context';
 import db, {firebase} from '../../config/firebase';
+import initialState from '../../context/initial-state';
 
 const Profile = () => {
   const {user} = React.useContext(RootContext);
-  const [data, setData] = useState({});
+  const [data, setData] = useState(initialState.user);
   const [config, setConfig] = useState({error: false, loading: false});
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const Profile = () => {
       const blob = await (await fetch(uri)).blob();
       setConfig({loading: true, error: false});
       ref
-        .child(`images/${photo}/${fileName + '_' + user.id}`)
+        .child(`images/${photo}/${fileName + '_' + data.id}`)
         .put(blob)
         .then(({ref}) => {
           ref.getDownloadURL().then(value => {
@@ -98,9 +100,12 @@ const Profile = () => {
           <Item stackedLabel>
             <Label>Username</Label>
             <Input
-              value={data.username}
-              onChangeText={text => setData({...data, username: text})}
+              disabled={true}
+              value={user.uid}
             />
+            <Button transparent style={s.clipBoard} onPress={() => copy(user.uid)}>
+              <Icon name="copy" style={s.copy} />
+            </Button>
           </Item>
           <Item stackedLabel>
             <Label>Name</Label>
@@ -124,6 +129,11 @@ const Profile = () => {
     </Container>
   );
 };
+
+const copy = content => {
+  Clipboard.setString(content);
+  toastr('Copied text');
+}
 
 Profile.navigationOptions = {
   title: 'Profile',

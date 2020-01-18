@@ -8,9 +8,9 @@ export const Provider = ({children}) => {
   useEffect(() => {
     firebase.auth().onAuthStateChanged(usr => {
       if (usr) {
-        const uid = usr.uid;
-        db.ref(`users/${uid}`).on('value', snapshot => {
-          setUser({uid, data: snapshot.val()});
+        const {displayName} = usr;
+        db.ref(`users/${displayName}`).on('value', snapshot => {
+          setUser({uid: displayName, data: snapshot.val()});
         });
       }
     });

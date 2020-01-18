@@ -16,42 +16,56 @@ import sColor from '../../public/styles/color';
 import color from '../../config/color';
 import Header from '../../components/Header';
 import {DangerModal} from '../../components/Modal';
-import {removeDataStorage, toastr, clearSession} from '../../helpers/script';
-import {firebase} from '../../config/firebase';
+import Loader from '../../components/Loader';
+import {toastr, clearSession} from '../../helpers/script';
+import db, {firebase} from '../../config/firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 
-export default function Account({navigation: {navigate, push}}) {
-  const [deleteModal, setDeleteModal] = useState(false);
+export default function Account({navigation: {navigate, push, state: {params}}}) {
+  const [deleteModal, setDeleteModal] = useState(params ? params.delete : false);
   const [config, setConfig] = useState({error: false, loading: false});
   const logout = () => {
+    setConfig({loading: true, error: false});
     firebase
       .auth()
       .signOut()
       .then(() => {
         AsyncStorage.removeItem('loggedIn').then(() => {
+          setConfig({loading: false, error: false});
           navigate('Login');
         });
+      })
+      .catch(() => {
+        setConfig({loading: false, error: true});
+        toastr('Ops, network error');
       });
   };
   const deleteAccount = () => {
-    // axios
-    //   .delete(`${API_ENDPOINT}profile`, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Authorization: 'Bearer ' + data.token,
-    //     },
-    //     data: {user_id: data.user_id},
-    //   })
-    //   .then(() => {
-    //     setConfig({loading: false, error: false});
-    //     setDeleteModal(false);
-    //     clearSession(() => navigate('Auth'));
-    //   })
-    //   .catch(() => {
-    //     setConfig({loading: false, error: true});
-    //     setDeleteModal(false);
-    //     toastr('Ops, network error');
-    //   });
+    setDeleteModal(false);
+    setConfig({loading: true, error: false});
+    const user = firebase.auth().currentUser;
+    user
+      .delete()
+      .then(() => {
+        db.ref(`users/${user.uid}`)
+          .set(null)
+          .then(() => {
+            clearSession(() => {
+              setConfig({loading: false, error: false});
+              toastr('Account successfully deleted.', 'success');
+              navigate('Login');
+            });
+          })
+          .catch(() => {
+            setConfig({loading: false, error: true});
+            toastr('Ops, network error');
+          });
+      })
+      .catch(() => {
+        setConfig({loading: false, error: true});
+        toastr("Please login again to verify it's you.");
+        navigate('Login', {continue: 'Account'});
+      });
   };
   return (
     <Container>
@@ -126,6 +140,7 @@ export default function Account({navigation: {navigate, push}}) {
           </ListArrow>
         </List>
       </Content>
+      {config.loading && <Loader text="Please wait" />}
     </Container>
   );
 }

@@ -1,6 +1,13 @@
 import {StyleSheet} from 'react-native';
 import color from '../../config/color';
 const s = StyleSheet.create({
+  clipBoard: {
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    height: 50,
+  },
+  copy: {color: '#000'},
   imgCover: {
     height: 150,
     position: 'relative',

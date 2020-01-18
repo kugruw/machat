@@ -53,7 +53,7 @@ const BottomModal = props => {
       animationOut="slideOutDown"
       isVisible={props.visible}
       style={s.bottomModalContainer}>
-      <View style={[sColor.lightBgColor, s.modal, s.bottomModal]}>
+      <View style={[sColor.lightBgColor, s.bottomModal]}>
         <View>
           <H3 style={[sColor.secondaryColor, sGlobal.textCenter]}>
             {props.title || 'Alert'}
@@ -85,7 +85,7 @@ const BottomModal = props => {
 
 const s = StyleSheet.create({
   modal: {
-    paddingTop: 24,
+    paddingVertical: 24,
   },
   modalMessage: {
     paddingTop: 20,
@@ -94,7 +94,7 @@ const s = StyleSheet.create({
   modalButton: {
     borderRadius: 0,
   },
-  bottomModal: {position: 'absolute', bottom: 0},
+  bottomModal: {position: 'absolute', bottom: 0, paddingTop: 24},
   bottomModalContainer: {margin: 0, position: 'relative'},
 });
 

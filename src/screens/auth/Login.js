@@ -15,7 +15,7 @@ import sGlobal from '../../public/styles';
 import {firebase} from '../../config/firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 
-const Login = ({navigation: {push, navigate}}) => {
+const Login = ({navigation: {push, navigate, state: {params}}}) => {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [config, setConfig] = useState({
@@ -28,7 +28,7 @@ const Login = ({navigation: {push, navigate}}) => {
     } catch (err) {
       toastr('Ops, something error');
     }
-    navigate('Chat');
+    navigate(params ? params.continue : 'Chat', params && {delete: true});
   };
   const loginUser = () => {
     if (!user || !password) {

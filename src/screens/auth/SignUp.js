@@ -18,39 +18,60 @@ import db, {firebase} from '../../config/firebase';
 const SignUp = ({navigation: {goBack}}) => {
   let [email, setEmail] = useState('');
   let [password, setPassword] = useState('');
-  let [confirmPassword, setConfirmPassword] = useState('');
+  let [username, setUsername] = useState('');
   let [config, setConfig] = useState({
     loading: false,
     error: false,
   });
 
   const handleSubmit = () => {
-    if (!email || !password || !confirmPassword) {
+    if (!email || !username || !password) {
       toastr('Please fill out all of this field.', 'danger');
       return;
     }
-    if (password !== confirmPassword) {
-      toastr("Confirm password doesn't match", 'danger');
-      return;
-    }
     setConfig({loading: true, error: false});
+    db.ref(`users/${username}`)
+      .once('value')
+      .then(snapshot => {
+        if (!snapshot.val()) {
+          registerUser();
+        } else {
+          toastr('Username already registered');
+          setConfig({loading: false, error: false});
+        }
+      })
+      .catch(err => {
+        toastr(err.message);
+        setConfig({loading: false, error: true});
+      });
+  };
+  const registerUser = () => {
     firebase
       .auth()
       .createUserWithEmailAndPassword(email, password)
       .then(({user}) => {
-        db.ref(`users/${user.uid}`).set({...initialState.user, email : user.email, name: user.email.split('@', 1)[0]}, err => {
-          if (!err) {
-            setConfig({loading: false, error: false});
-            toastr(
-              'Your account successfully registered. You can login now!',
-              'success',
-            );
-            goBack();
-          }
-        });
+        db.ref(`users/${username}`).set(
+          {
+            ...initialState.user,
+            id: user.uid,
+            email: user.email,
+            name: user.email.split('@', 1)[0],
+          },
+          err => {
+            if (!err) {
+              user.updateProfile({displayName: username}).then(() => {
+                setConfig({loading: false, error: false});
+                toastr(
+                  'Your account successfully registered. You can login now!',
+                  'success',
+                );
+                goBack();
+              });
+            }
+          },
+        );
       })
       .catch(err => {
-        console.log(err);
         setConfig({loading: false, error: true});
         toastr(err.message, 'danger');
       });
@@ -62,6 +83,16 @@ const SignUp = ({navigation: {goBack}}) => {
           <Image
             source={require('../../public/images/logo.png')}
             style={s.img}
+          />
+        </View>
+        <View style={s.section}>
+          <TextInput
+            editable={!config.loading}
+            secureTextEntry={true}
+            placeholder="Username"
+            style={s.input}
+            value={username}
+            onChangeText={text => setUsername(text)}
           />
         </View>
         <View style={s.section}>
@@ -81,16 +112,6 @@ const SignUp = ({navigation: {goBack}}) => {
             style={s.input}
             value={password}
             onChangeText={text => setPassword(text)}
-          />
-        </View>
-        <View style={s.section}>
-          <TextInput
-            editable={!config.loading}
-            secureTextEntry={true}
-            placeholder="Confirm Password"
-            style={s.input}
-            value={confirmPassword}
-            onChangeText={text => setConfirmPassword(text)}
           />
         </View>
         <View style={s.section}>

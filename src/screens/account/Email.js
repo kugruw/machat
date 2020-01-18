@@ -25,7 +25,6 @@ const ChangeEmail = () => {
   const [newEmail, setNewEmail] = useState('');
   const [config, setConfig] = useState({loading: false, error: false});
   const [modalVisible, setModalVisible] = useState(false);
-
   const handleSubmit = () => {
     if (config.loading) {
       return;
@@ -41,7 +40,7 @@ const ChangeEmail = () => {
         user
           .updateEmail(newEmail)
           .then(() => {
-            db.ref(`users/${user.uid}/email`).set(newEmail, err => {
+            db.ref(`users/${user.displayName}/email`).set(newEmail, err => {
               if (err) {
                 setConfig({loading: false, error: true});
                 toastr(err.message, 'danger');
@@ -57,9 +56,9 @@ const ChangeEmail = () => {
             toastr(err.message, 'danger');
           });
       })
-      .catch(() => {
+      .catch(err => {
         setConfig({loading: false, error: true});
-        toastr('Invalid password.', 'danger');
+        toastr(err.message, 'danger');
       });
   };
 
