@@ -88,7 +88,6 @@ const SignUp = ({navigation: {goBack}}) => {
         <View style={s.section}>
           <TextInput
             editable={!config.loading}
-            secureTextEntry={true}
             placeholder="Username"
             style={s.input}
             value={username}

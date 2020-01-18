@@ -47,7 +47,7 @@ export default function Account({navigation: {navigate, push, state: {params}}})
     user
       .delete()
       .then(() => {
-        db.ref(`users/${user.uid}`)
+        db.ref(`users/${user.displayName}`)
           .set(null)
           .then(() => {
             clearSession(() => {

@@ -4,13 +4,16 @@ import db, {firebase} from '../config/firebase';
 
 const RootContext = React.createContext();
 export const Provider = ({children}) => {
-  const [user, setUser] = useState({uid: undefined, ...initialState.user});
+  const [user, setUser] = useState({uid: '', ...initialState.user});
   useEffect(() => {
     firebase.auth().onAuthStateChanged(usr => {
       if (usr) {
         const {displayName} = usr;
         db.ref(`users/${displayName}`).on('value', snapshot => {
-          setUser({uid: displayName, data: snapshot.val()});
+          const val = snapshot.val();
+          if (val !== null) {
+            setUser({uid: displayName, data: val});
+          }
         });
       }
     });

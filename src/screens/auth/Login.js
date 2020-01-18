@@ -50,7 +50,8 @@ const Login = ({navigation: {push, navigate, state: {params}}}) => {
   };
   useEffect(() => {
     getDataStorage('loggedIn', value => {
-      if(value !== null) {
+      const redirect = params ? true : false;
+      if(value !== null && !redirect) {
         navigate('Chat');
       }
     });

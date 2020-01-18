@@ -20,11 +20,10 @@ import Loader from '../../components/Loader';
 import {toastr, showImagePicker} from '../../helpers/script';
 import RootContext from '../../context';
 import db, {firebase} from '../../config/firebase';
-import initialState from '../../context/initial-state';
 
 const Profile = () => {
   const {user} = React.useContext(RootContext);
-  const [data, setData] = useState(initialState.user);
+  const [data, setData] = useState(user.data);
   const [config, setConfig] = useState({error: false, loading: false});
 
   useEffect(() => {
@@ -73,7 +72,7 @@ const Profile = () => {
     <Container style={sGlobal.relative}>
       <Content>
         <ImageBackground
-          source={{uri: data.cover || '../../public/images/user2.png'}}
+          source={{uri: data ? data.cover : ''}}
           style={[s.imgCover, sColor.secondaryBgColor]}>
           <Button
             transparent
@@ -85,13 +84,13 @@ const Profile = () => {
         </ImageBackground>
         <View style={sGlobal.center}>
           <ImageBackground
-            source={{uri: data.avatar || '../../public/images/user2.png'}}
+            source={{uri: data ? data.avatar : ''}}
             imageStyle={s.imgProfileStyle}
             style={[s.imgProfile, sGlobal.center, sColor.lightBgColor]}>
             <Button transparent onPress={() => pickImage('avatar')}>
               <Image
                 source={require('../../public/images/user2.png')}
-                style={[s.defaultImg, data.avatar && s.invisible]}
+                style={[s.defaultImg, data && data.avatar && s.invisible]}
               />
             </Button>
           </ImageBackground>
