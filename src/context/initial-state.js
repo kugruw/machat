@@ -8,10 +8,12 @@ const user = {
 };
 
 const friends = {};
+const chats = {};
 
 const initialState = {
     user,
     friends,
+    chats,
 };
 
 export default initialState;
