@@ -8,6 +8,7 @@ import {defaultNavigationOptions} from './src/config/navigation';
 import {color} from './src/config/color';
 
 import Chat from './src/screens/chat';
+import ChatRoom from './src/screens/chat/Room';
 
 import Friends from './src/screens/friends';
 import SearchFriends from './src/screens/friends/Search';
@@ -72,6 +73,7 @@ const Auth = createStackNavigator({
 const Main = createStackNavigator(
   {
     BottomTabNavigator,
+    ChatRoom,
     SearchFriends,
     FriendsLocation,
     FriendProfile,

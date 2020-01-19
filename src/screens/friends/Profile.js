@@ -20,6 +20,7 @@ import ss from '../../public/styles';
 
 const Profile = ({
   navigation: {
+    navigate,
     state: {params},
   },
 }) => {
@@ -55,7 +56,7 @@ const Profile = ({
               <Text style={ss.darkestColor}>Trash</Text>
             </View>
           </Button>
-          <Button vertical transparent>
+          <Button vertical transparent onPress={() => navigate('ChatRoom', params)}>
             <View style={[s.start, s.footerTab, ss.center]}>
               <Icon name="ios-chatbubbles" style={[ss.darkestColor, s.icon]} />
               <Text style={ss.darkestColor}>Chat</Text>
