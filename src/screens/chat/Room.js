@@ -27,15 +27,30 @@ const Room = ({
   const [message, setMessage] = useState('');
 
   const sendMessage = () => {
-    db.ref(`messages/${params.key}/${+new Date()}`).set(
-      {message, sender: user.uid, receiver: params.name},
-      err => {
-        if (err) {
-          toastr('No internet connection');
-        }
-        setMessage('');
-      },
-    );
+    const postMessage = {
+      message,
+      sender: user.uid,
+      receiver: params.key,
+    };
+    if (data) {
+      db.ref(`messages/${params.key}/${+new Date()}`).set(postMessage);
+    } else {
+      const newChat = db
+        .ref()
+        .child('messages')
+        .push().key;
+
+      db.ref(`chats/${params.key}`)
+        .update({[newChat]: true})
+        .then(() => {
+          db.ref(`/chats/${user.uid}`)
+            .update({[newChat]: true})
+            .then(() => {
+              db.ref(`messages/${newChat}/${+new Date()}`).set(postMessage);
+            });
+        });
+    }
+    setMessage('');
   };
 
   useEffect(() => {
@@ -48,15 +63,16 @@ const Room = ({
         padder
         contentContainerStyle={s.container}
         style={ss.grayBgColor}>
-        {Object.keys(data).map(elm => (
-          <View
-            key={elm}
-            style={data[elm].sender === user.uid ? s.right : s.left}>
-            <Text style={[ss.lightBgColor, s.message]}>
-              {data[elm].message}
-            </Text>
-          </View>
-        ))}
+        {data &&
+          Object.keys(data).map(elm => (
+            <View
+              key={elm}
+              style={data[elm].sender === user.uid ? s.right : s.left}>
+              <Text style={[ss.lightBgColor, s.message]}>
+                {data[elm].message}
+              </Text>
+            </View>
+          ))}
       </Content>
       <Footer style={ss.lightBgColor}>
         <FooterTab style={ss.lightBgColor}>

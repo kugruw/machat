@@ -38,9 +38,10 @@ export const Provider = ({children}) => {
         db.ref(`chats/${displayName}`).on('value', snapshot => {
           const val = snapshot.val();
           if (val !== null) {
+            const chat = {};
             for (const key in val) {
               db.ref(`messages/${key}`).on('value', snapshot => {
-                const chat = {[key]: snapshot.val()};
+                chat[key] = snapshot.val();
                 setChats(chat);
               });
             }

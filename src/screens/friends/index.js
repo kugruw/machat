@@ -46,7 +46,7 @@ const Index = props => {
                 name={data[key].name}
                 status={data[key].status}
                 thumbnail={data[key].avatar}
-                handlePress={() => props.navigation.push('FriendProfile', data[key])}
+                handlePress={() => props.navigation.push('FriendProfile', {...data[key], key})}
               />
             ))}
           </List>

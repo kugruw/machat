@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {StyleSheet, View, Button as NativeButton, Image} from 'react-native';
 import {Container, Content, Button, Text, Item, Icon, Input} from 'native-base';
 import ss from '../../public/styles';
@@ -6,8 +6,12 @@ import color from '../../config/color';
 import Loader from '../../components/Loader';
 import {toastr} from '../../helpers/script';
 import db, {firebase} from '../../config/firebase';
+import RootContext from '../../context';
 
 const Search = props => {
+  const {
+    user: {uid},
+  } = useContext(RootContext);
   const [username, setUsername] = useState('');
   const [user, setUser] = useState(undefined);
   const [config, setConfig] = useState({loading: false, error: false});
@@ -31,6 +35,10 @@ const Search = props => {
   };
 
   const addFriend = () => {
+    if(username === uid) {
+      toastr('Anda gak punya teman?');
+      return;
+    }
     setConfig({loading: true, error: false});
     db.ref(`friends/${firebase.auth().currentUser.displayName}/${username}`)
       .set(true)
@@ -83,7 +91,14 @@ const Card = props => {
     <View style={[ss.lightBgColor, ss.shadow, s.card]}>
       <View style={ss.center}>
         <View>
-          <Image source={props.imgUri ? {uri: props.imgUri} : require('../../public/images/user2.png')} style={s.img} />
+          <Image
+            source={
+              props.imgUri
+                ? {uri: props.imgUri}
+                : require('../../public/images/user2.png')
+            }
+            style={s.img}
+          />
           <Text
             numberOfLines={1}
             ellipsizeMode="tail"
