@@ -35,24 +35,11 @@ export const Provider = ({children}) => {
           }
         });
 
-        db.ref(`chats/${displayName}`).once('value', snapshot => {
-          const val = snapshot.val();
-          if (val !== null) {
-            const chat = {};
-            for (const key in val) {
-              db.ref(`messages/${key}`).once('value', snapshot => {
-                chat[key] = snapshot.val();
-                setChats(chat);
-              });
-            }
-          }
-        });
-
         db.ref(`chats/${displayName}`).on('value', snapshot => {
           const val = snapshot.val();
           if (val !== null) {
             for (const key in val) {
-              db.ref(`messages/${key}`).on('child_changed', snapshot => {
+              db.ref(`messages/${key}`).on('value', snapshot => {
                 const chat = {[key]: snapshot.val()};
                 setChats(chat);
               });

@@ -10,7 +10,9 @@ import {
   FooterTab,
 } from 'native-base';
 import ss from '../../public/styles';
+import {toastr} from '../../helpers/script';
 import RootContext from '../../context';
+import db from '../../config/firebase';
 
 const Room = ({
   navigation: {
@@ -24,8 +26,20 @@ const Room = ({
   const [data, setData] = useState(chat);
   const [message, setMessage] = useState('');
 
+  const sendMessage = () => {
+    db.ref(`messages/${params.key}/${+new Date()}`).set(
+      {message, sender: user.uid, receiver: params.name},
+      err => {
+        if (err) {
+          toastr('No internet connection');
+        }
+        setMessage('');
+      },
+    );
+  };
+
   useEffect(() => {
-    setData({...data, ...chat});
+    setData(chat);
   }, [chat]);
 
   return (
@@ -35,8 +49,12 @@ const Room = ({
         contentContainerStyle={s.container}
         style={ss.grayBgColor}>
         {Object.keys(data).map(elm => (
-          <View style={data[elm].sender === user.uid ? s.left : s.right}>
-            <Text style={[ss.lightBgColor, s.message]}>{data[elm].message}</Text>
+          <View
+            key={elm}
+            style={data[elm].sender === user.uid ? s.right : s.left}>
+            <Text style={[ss.lightBgColor, s.message]}>
+              {data[elm].message}
+            </Text>
           </View>
         ))}
       </Content>
@@ -48,7 +66,11 @@ const Room = ({
             value={message}
             onChangeText={text => setMessage(text)}
           />
-          <Button transparent icon style={[s.sendButton, ss.lightBgColor]}>
+          <Button
+            transparent
+            icon
+            style={[s.sendButton, ss.lightBgColor]}
+            onPress={sendMessage}>
             <Icon name="send" style={ss.primaryColor} />
           </Button>
         </FooterTab>
@@ -65,6 +87,7 @@ const s = StyleSheet.create({
     alignItems: 'flex-end',
   },
   message: {
+    marginVertical: 5,
     paddingHorizontal: 15,
     paddingVertical: 7.5,
     borderRadius: 7,

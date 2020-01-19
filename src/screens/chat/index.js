@@ -9,7 +9,7 @@ const Index = props => {
   const [data, setData] = useState(chats);
 
   useEffect(() => {
-    setData({...data, ...chats});
+    setData(chats);
   }, [chats]);
 
   return (
@@ -18,12 +18,13 @@ const Index = props => {
       <Content>
         <List>
           {Object.keys(data).map(key => {
-            const message = Object.keys(data[key]).find(
-              elm => data[key][elm].sender !== user.uid,
-            );
-            const name = data[key][message].sender;
+            const message = Object.keys(data[key]);
+            const firstMessage = data[key][message[message.length - 1]];
+            const {sender, receiver} = firstMessage;
+            const name = sender === user.uid ? receiver : sender;
             return (
               <ChatItem
+                key={key}
                 name={name}
                 lastMessage="Doing what you like will always keep you happy . ."
                 lastChatTime="3:43"
