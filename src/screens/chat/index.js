@@ -25,7 +25,7 @@ const Index = props => {
           key: receiver,
           name,
           lastMessage: lastMessage.message,
-          date: `${date.getHours()}:${date.getMinutes()}`,
+          date: `${date.getHours()}.${date.getMinutes()}`,
         });
       });
       dispatch.addChatRoom(chatRoom);

@@ -26,6 +26,7 @@ const Room = ({
   } = useContext(RootContext);
   const [data, setData] = useState([]);
   const [message, setMessage] = useState('');
+  const [config, setConfig] = useState(true);
 
   const sendMessage = () => {
     const postMessage = {
@@ -47,9 +48,11 @@ const Room = ({
           db.ref(`chats/${user.uid}`)
             .update({[newChat]: true})
             .then(() => {
-              db.ref(`messages/${newChat}/${+new Date()}`).set(postMessage).then(() => {
-                setChatId(newChat);
-              });
+              db.ref(`messages/${newChat}/${+new Date()}`)
+                .set(postMessage)
+                .then(() => {
+                  setChatId(newChat);
+                });
             });
         });
     }
@@ -60,26 +63,43 @@ const Room = ({
     if (chat) {
       const chatList = [];
       Object.keys(chat).forEach(key => {
+        const date = new Date(parseInt(key));
         chatList.push({
           key,
           message: chat[key].message,
           position: chat[key].sender === user.uid ? s.right : s.left,
+          date: `${date.getHours()}.${date.getMinutes()}`,
         });
       });
       setData(chatList);
     }
   }, [chat, chatId]);
 
+  useEffect(() => {
+    if (message.length === 0) {
+      setConfig(true);
+    } else {
+      setConfig(false);
+    }
+  }, [message]);
+  
   return (
     <Container style={[s.relative, ss.grayBgColor]}>
       <View style={s.container}>
         <FlatList
-          contentContainerStyle={s.chatList}
+          contentContainerStyle={s.flexEnd}
           data={data}
           keyExtractor={item => item.key}
           renderItem={({item}) => (
             <View style={item.position}>
-              <Text style={[ss.lightBgColor, s.message]}>{item.message}</Text>
+              <View style={[s.message, ss.lightBgColor, ss.flexRow]}>
+                <Text>{item.message}</Text>
+                <View style={s.flexEnd}>
+                  <Text note style={s.date}>
+                    {item.date}
+                  </Text>
+                </View>
+              </View>
             </View>
           )}
         />
@@ -87,12 +107,14 @@ const Room = ({
       <Footer style={[ss.lightBgColor, s.footer]}>
         <FooterTab style={ss.lightBgColor}>
           <TextInput
+            multiline={true}
             placeholder="Type message"
             style={s.input}
             value={message}
             onChangeText={text => setMessage(text)}
           />
           <Button
+            disabled={config}
             transparent
             icon
             style={[s.sendButton, ss.lightBgColor]}
@@ -106,6 +128,7 @@ const Room = ({
 };
 
 const s = StyleSheet.create({
+  date: {marginLeft: 10, fontSize: 12},
   left: {
     alignItems: 'flex-start',
   },
@@ -126,7 +149,7 @@ const s = StyleSheet.create({
     paddingBottom: 15,
     flex: 1,
   },
-  chatList: {
+  flexEnd: {
     justifyContent: 'flex-end',
   },
   footer: {position: 'absolute', bottom: 0},
