@@ -10,6 +10,7 @@ export const Provider = ({children}) => {
   const [friends, setFriends] = useState(initialState.friends);
   const [chats, setChats] = useState(initialState.chats);
   const [location, setLocation] = useState(undefined);
+  const [chatRoom, setChatRoom] = useState([]);
 
   const watchPosition = callback => {
     Geolocation.watchPosition(
@@ -40,6 +41,7 @@ export const Provider = ({children}) => {
 
   const dispatch = {
     location: payload => setLocation(payload),
+    addChatRoom: payload => setChatRoom(payload),
   };
 
   useEffect(() => {
@@ -93,13 +95,11 @@ export const Provider = ({children}) => {
     if (user) {
       const {displayName} = user;
       if (Platform.OS === 'ios') {
-        console.log('ios');
         watchPosition(({coords: {latitude, longitude}}) => {
           db.ref(`locations/${displayName}`).set({latitude, longitude});
         });
       } else {
         requestLocationPermission(({coords: {latitude, longitude}}) => {
-          console.log('android');
           db.ref(`locations/${displayName}`).set({latitude, longitude});
         });
       }
@@ -107,7 +107,7 @@ export const Provider = ({children}) => {
   }, [location]);
 
   return (
-    <RootContext.Provider value={{user, friends, chats, dispatch}}>
+    <RootContext.Provider value={{user, friends, chats, chatRoom, dispatch}}>
       {children}
     </RootContext.Provider>
   );

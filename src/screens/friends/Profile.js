@@ -1,11 +1,5 @@
-import React from 'react';
-import {
-  StyleSheet,
-  View,
-  Text as TextMedium,
-  Image,
-  ImageBackground,
-} from 'react-native';
+import React, {useContext} from 'react';
+import {StyleSheet, View, Image, ImageBackground} from 'react-native';
 import {
   Container,
   Content,
@@ -17,13 +11,44 @@ import {
   H3,
 } from 'native-base';
 import ss from '../../public/styles';
+import {toastr} from '../../helpers/script';
+import db from '../../config/firebase';
+import RootContext from '../../context';
 
 const Profile = ({
   navigation: {
     navigate,
+    goBack,
     state: {params},
   },
 }) => {
+  const {
+    user: {uid},
+    chatRoom,
+  } = useContext(RootContext);
+
+  const deleteFriends = () => {
+    db.ref(`friends/${uid}/${params.key}`)
+      .set(null)
+      .then(() => {
+        goBack();
+        toastr('Friend successfully deleted');
+      });
+  };
+
+  const goToChatRoom = data => {
+    const room = chatRoom.find(elm => elm.name === params.key);
+    if (room) {
+      navigate('ChatRoom', {
+        chatId: room.chatId,
+        key: params.key,
+        name: room.name,
+      });
+    } else {
+      navigate('ChatRoom', data);
+    }
+  };
+
   return (
     <Container>
       <Content contentContainerStyle={s.container}>
@@ -50,13 +75,13 @@ const Profile = ({
       </Content>
       <Footer style={s.footer}>
         <FooterTab style={ss.lightBgColor}>
-          <Button vertical transparent>
+          <Button vertical transparent onPress={deleteFriends}>
             <View style={[s.end, s.footerTab, ss.center]}>
               <Icon name="trash" style={[ss.darkestColor, s.icon]} />
               <Text style={ss.darkestColor}>Trash</Text>
             </View>
           </Button>
-          <Button vertical transparent onPress={() => navigate('ChatRoom', params)}>
+          <Button vertical transparent onPress={() => goToChatRoom(params)}>
             <View style={[s.start, s.footerTab, ss.center]}>
               <Icon name="ios-chatbubbles" style={[ss.darkestColor, s.icon]} />
               <Text style={ss.darkestColor}>Chat</Text>

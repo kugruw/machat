@@ -19,8 +19,9 @@ const Room = ({
     state: {params},
   },
 }) => {
+  const [chatId, setChatId] = useState(params.chatId);
   const {
-    chats: {[params.chatId]: chat},
+    chats: {[chatId]: chat},
     user,
   } = useContext(RootContext);
   const [data, setData] = useState([]);
@@ -32,8 +33,8 @@ const Room = ({
       sender: user.uid,
       receiver: params.key,
     };
-    if (data) {
-      db.ref(`messages/${params.chatId}/${+new Date()}`).set(postMessage);
+    if (chatId) {
+      db.ref(`messages/${chatId}/${+new Date()}`).set(postMessage);
     } else {
       const newChat = db
         .ref()
@@ -46,7 +47,9 @@ const Room = ({
           db.ref(`chats/${user.uid}`)
             .update({[newChat]: true})
             .then(() => {
-              db.ref(`messages/${newChat}/${+new Date()}`).set(postMessage);
+              db.ref(`messages/${newChat}/${+new Date()}`).set(postMessage).then(() => {
+                setChatId(newChat);
+              });
             });
         });
     }
@@ -54,21 +57,24 @@ const Room = ({
   };
 
   useEffect(() => {
-    const chatList = [];
-    Object.keys(chat).forEach(key => {
-      chatList.push({
-        key,
-        message: chat[key].message,
-        position: chat[key].sender === user.uid ? s.right : s.left,
+    if (chat) {
+      const chatList = [];
+      Object.keys(chat).forEach(key => {
+        chatList.push({
+          key,
+          message: chat[key].message,
+          position: chat[key].sender === user.uid ? s.right : s.left,
+        });
       });
-    });
-    setData(chatList);
-  }, [chat]);
+      setData(chatList);
+    }
+  }, [chat, chatId]);
 
   return (
     <Container style={[s.relative, ss.grayBgColor]}>
       <View style={s.container}>
         <FlatList
+          contentContainerStyle={s.chatList}
           data={data}
           keyExtractor={item => item.key}
           renderItem={({item}) => (
@@ -117,8 +123,11 @@ const s = StyleSheet.create({
   sendButton: {height: '100%', position: 'absolute', right: 0},
   container: {
     paddingHorizontal: 10,
-    paddingBottom: 10,
-    height: '100%',
+    paddingBottom: 15,
+    flex: 1,
+  },
+  chatList: {
+    justifyContent: 'flex-end',
   },
   footer: {position: 'absolute', bottom: 0},
   relative: {position: 'relative'},

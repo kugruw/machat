@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text as TextMedium, TextInput} from 'react-native';
+import {StyleSheet, View, FlatList, TextInput} from 'react-native';
 import {
   Container,
   Content,
@@ -23,34 +23,48 @@ const Index = props => {
   const [data, setData] = useState(friends);
 
   useEffect(() => {
-    setData(friends);
+    if (friends) {
+      const arr = [];
+      Object.keys(friends).forEach(key => {
+        arr.push({
+          key,
+          name: friends[key].name,
+          status: friends[key].status,
+          avatar: friends[key].avatar,
+          data: friends[key],
+        });
+      });
+      setData(arr);
+    }
   }, [friends]);
 
   return (
     <Container>
       <FriendsHeader {...props} />
-      <Content>
-        <View style={[ss.secondaryBgColor]}>
-          <TextInput
-            style={[s.inputSearch, ss.secondaryBgColor, ss.lightColor]}
-            placeholderTextColor="rgba(255, 255, 255, 0.5)"
-            placeholder="Search friends"
+      <View style={[ss.secondaryBgColor]}>
+        <TextInput
+          style={[s.inputSearch, ss.secondaryBgColor, ss.lightColor]}
+          placeholderTextColor="rgba(255, 255, 255, 0.5)"
+          placeholder="Search friends"
+        />
+      </View>
+      <FlatList
+        data={data}
+        keyExtractor={item => item.key}
+        renderItem={({item}) => (
+          <Friend
+            name={item.name}
+            status={item.status}
+            thumbnail={item.avatar}
+            handlePress={() =>
+              props.navigation.push('FriendProfile', {
+                ...item.data,
+                key: item.key,
+              })
+            }
           />
-        </View>
-        <View>
-          <List>
-            {Object.keys(data).map((key, i) => (
-              <Friend
-                key={i}
-                name={data[key].name}
-                status={data[key].status}
-                thumbnail={data[key].avatar}
-                handlePress={() => props.navigation.push('FriendProfile', {...data[key], key})}
-              />
-            ))}
-          </List>
-        </View>
-      </Content>
+        )}
+      />
     </Container>
   );
 };

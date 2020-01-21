@@ -21,8 +21,16 @@ import {toastr, clearSession} from '../../helpers/script';
 import db, {firebase} from '../../config/firebase';
 import AsyncStorage from '@react-native-community/async-storage';
 
-export default function Account({navigation: {navigate, push, state: {params}}}) {
-  const [deleteModal, setDeleteModal] = useState(params ? params.delete : false);
+export default function Account({
+  navigation: {
+    navigate,
+    push,
+    state: {params},
+  },
+}) {
+  const [deleteModal, setDeleteModal] = useState(
+    params ? params.delete : false,
+  );
   const [config, setConfig] = useState({error: false, loading: false});
   const logout = () => {
     setConfig({loading: true, error: false});
@@ -50,11 +58,19 @@ export default function Account({navigation: {navigate, push, state: {params}}})
         db.ref(`users/${user.displayName}`)
           .set(null)
           .then(() => {
-            clearSession(() => {
-              setConfig({loading: false, error: false});
-              toastr('Account successfully deleted.', 'success');
-              navigate('Login');
-            });
+            db.ref(`locations/${user.displayName}`)
+              .set(null)
+              .then(() => {
+                db.ref(`friends/${user.displayName}`)
+                  .set(null)
+                  .then(() => {
+                    clearSession(() => {
+                      setConfig({loading: false, error: false});
+                      toastr('Account successfully deleted.', 'success');
+                      navigate('Login');
+                    });
+                  });
+              });
           })
           .catch(() => {
             setConfig({loading: false, error: true});
@@ -79,30 +95,6 @@ export default function Account({navigation: {navigate, push, state: {params}}})
       />
       <Header title="Account" />
       <Content>
-        {/* <View style={[sColor.secondaryBgColor, s.banner]}>
-          <View style={[sGlobal.center, s.imgContainer]}>
-            <View style={s.imgView}>
-              <ImageBackground
-                source={require('../../public/images/user2.png')}
-                imageStyle={s.imgCircle}
-                style={[s.img, s.border, s.imgCircle]}>
-                <ImageBackground
-                  source={{
-                    uri: `${''}images/profile/${'file.png'}`,
-                  }}
-                  imageStyle={s.imgCircle}
-                  style={s.img}
-                />
-              </ImageBackground>
-            </View>
-          </View>
-          <H2 style={[sGlobal.textCenter, sColor.lightColor]}>
-            {'Puput'}
-          </H2>
-          <TextMedium style={[sGlobal.textCenter, sColor.lightColor]}>
-            {'william'}
-          </TextMedium>
-        </View> */}
         <List style={s.listContainer}>
           <ListItem itemDivider style={sColor.lightBgColor}>
             <Text>Settings</Text>

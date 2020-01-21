@@ -39,7 +39,7 @@ const Maps = () => {
 };
 
 Maps.navigationOptions = {
-  title: 'Friends location',
+  title: 'User location',
 };
 
 export default Maps;
