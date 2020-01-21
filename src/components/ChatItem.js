@@ -3,7 +3,7 @@ import {ListItem, Left, Body, Right, Thumbnail, Text} from 'native-base';
 
 const ChatItem = props => {
   return (
-    <ListItem avatar onPress={props.handlePress}>
+    <ListItem noBorder avatar onPress={props.handlePress}>
       <Left>
         <Thumbnail source={props.avatar ? {uri: props.avatar} : require('../public/images/user2.png')} />
       </Left>

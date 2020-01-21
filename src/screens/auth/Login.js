@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {
   View,
   TextInput,
@@ -12,10 +12,12 @@ import {toastr, getDataStorage} from '../../helpers/script';
 import s from '../../public/styles/login-register';
 import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles';
-import {firebase} from '../../config/firebase';
 import AsyncStorage from '@react-native-community/async-storage';
+import {firebase} from '../../config/firebase';
+import RootContext from '../../context';
 
 const Login = ({navigation: {push, navigate, state: {params}}}) => {
+  const {dispatch} = useContext(RootContext);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [config, setConfig] = useState({
@@ -41,6 +43,7 @@ const Login = ({navigation: {push, navigate, state: {params}}}) => {
       .signInWithEmailAndPassword(user, password)
       .then(() => {
         setConfig({loading: false, error: false});
+        dispatch.location(Math.random());
         setLoggedIn();
       })
       .catch(() => {
@@ -48,6 +51,7 @@ const Login = ({navigation: {push, navigate, state: {params}}}) => {
         toastr('Invalid email or password.', 'danger');
       });
   };
+
   useEffect(() => {
     getDataStorage('loggedIn', value => {
       const redirect = params ? true : false;
@@ -56,6 +60,7 @@ const Login = ({navigation: {push, navigate, state: {params}}}) => {
       }
     });
   }, []);
+
   return (
     <Container style={s.center}>
       <View style={s.container}>

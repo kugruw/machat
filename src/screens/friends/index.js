@@ -15,7 +15,6 @@ import {Friends as FriendsHeader, Friends} from '../../components/Header';
 import ss from '../../public/styles';
 import color from '../../config/color';
 import RootContext from '../../context';
-import db from '../../config/firebase';
 
 const thumbnailSize = 50;
 

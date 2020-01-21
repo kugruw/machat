@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {StyleSheet, View, Text as TextMedium, TextInput} from 'react-native';
+import {StyleSheet, View, FlatList, TextInput} from 'react-native';
 import {
   Container,
   Content,
@@ -20,10 +20,10 @@ const Room = ({
   },
 }) => {
   const {
-    chats: {[params.key]: chat},
+    chats: {[params.chatId]: chat},
     user,
   } = useContext(RootContext);
-  const [data, setData] = useState(chat);
+  const [data, setData] = useState([]);
   const [message, setMessage] = useState('');
 
   const sendMessage = () => {
@@ -33,7 +33,7 @@ const Room = ({
       receiver: params.key,
     };
     if (data) {
-      db.ref(`messages/${params.key}/${+new Date()}`).set(postMessage);
+      db.ref(`messages/${params.chatId}/${+new Date()}`).set(postMessage);
     } else {
       const newChat = db
         .ref()
@@ -43,7 +43,7 @@ const Room = ({
       db.ref(`chats/${params.key}`)
         .update({[newChat]: true})
         .then(() => {
-          db.ref(`/chats/${user.uid}`)
+          db.ref(`chats/${user.uid}`)
             .update({[newChat]: true})
             .then(() => {
               db.ref(`messages/${newChat}/${+new Date()}`).set(postMessage);
@@ -54,27 +54,31 @@ const Room = ({
   };
 
   useEffect(() => {
-    setData(chat);
+    const chatList = [];
+    Object.keys(chat).forEach(key => {
+      chatList.push({
+        key,
+        message: chat[key].message,
+        position: chat[key].sender === user.uid ? s.right : s.left,
+      });
+    });
+    setData(chatList);
   }, [chat]);
 
   return (
-    <Container>
-      <Content
-        padder
-        contentContainerStyle={s.container}
-        style={ss.grayBgColor}>
-        {data &&
-          Object.keys(data).map(elm => (
-            <View
-              key={elm}
-              style={data[elm].sender === user.uid ? s.right : s.left}>
-              <Text style={[ss.lightBgColor, s.message]}>
-                {data[elm].message}
-              </Text>
+    <Container style={[s.relative, ss.grayBgColor]}>
+      <View style={s.container}>
+        <FlatList
+          data={data}
+          keyExtractor={item => item.key}
+          renderItem={({item}) => (
+            <View style={item.position}>
+              <Text style={[ss.lightBgColor, s.message]}>{item.message}</Text>
             </View>
-          ))}
-      </Content>
-      <Footer style={ss.lightBgColor}>
+          )}
+        />
+      </View>
+      <Footer style={[ss.lightBgColor, s.footer]}>
         <FooterTab style={ss.lightBgColor}>
           <TextInput
             placeholder="Type message"
@@ -112,9 +116,12 @@ const s = StyleSheet.create({
   input: {marginLeft: 16, width: '100%'},
   sendButton: {height: '100%', position: 'absolute', right: 0},
   container: {
-    flexGrow: 1,
-    justifyContent: 'flex-end',
+    paddingHorizontal: 10,
+    paddingBottom: 10,
+    height: '100%',
   },
+  footer: {position: 'absolute', bottom: 0},
+  relative: {position: 'relative'},
 });
 
 Room.navigationOptions = ({navigation}) => {
