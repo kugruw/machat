@@ -40,7 +40,7 @@ Prepare your android device or emulator, if you're new in react native you can s
 yarn run android
 ```
 
-## Create Environment Variable
+## Setup Environment Variable
 
 Create .env file in your root project folder.
 
