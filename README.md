@@ -1,7 +1,6 @@
 <h1 align="center">MaChat - Maps and Realtime Chat  </h1>
 <p align="center">
-  <img width="250" src="./src/public/logo-app.png"/>
-  <img width="250" src="./src/public/firebase-logo.png"/>
+  <img src="./readme-images/logo.png"/>
 </p>
 <p align="center">
   Built with React Native & Firebase
@@ -60,24 +59,19 @@ measurementId='YOUR_measurementId_FIREBASE'
 ## Screenshots
 
 <div align="center">
-    <img width="250" src="./src/public/ss/s1.png">   
-    <img width="250" src="./src/public/ss/s2.png">
-    <img width="250" src="./src/public/ss/s3.png">
+    <img width="250" src="./readme-images/demo/friends.png">   
+    <img width="250" src="./readme-images/demo/account.png">
+    <img width="250" src="./readme-images/demo/chat.png">
 </div>
 <div align="center">  
-    <img width="250" src="./src/public/ss/s4.png">   
-    <img width="250" src="./src/public/ss/s5.png">
-    <img width="250" src="./src/public/ss/s6.png">
+    <img width="250" src="./readme-images/demo/login.png">  
+    <img width="250" src="./readme-images/demo/profile.png">
+    <img width="250" src="./readme-images/demo/sign-up.png">
 </div>
 <div align="center">  
-    <img width="250" src="./src/public/ss/s7.png">   
-    <img width="250" src="./src/public/ss/s8.png">
-    <img width="250" src="./src/public/ss/s9.png">
-</div>
-<div align="center">  
-    <img width="250" src="./src/public/ss/s10.png">   
-    <img width="250" src="./src/public/ss/s11.png">
-    <img width="250" src="./src/public/ss/s12.png">
+    <img width="250" src="./readme-images/demo/delete-account.png">  
+    <img width="250" src="./readme-images/demo/change-password.png">
+    <img width="250" src="./readme-images/demo/change-email.png">
 </div>
 
 ## Contributing
