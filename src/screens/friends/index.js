@@ -1,15 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, FlatList, TextInput} from 'react-native';
+import {StyleSheet, View, FlatList, TextInput, Image} from 'react-native';
 import {
   Container,
-  Content,
   Text,
-  List,
+  H1,
   ListItem,
   Left,
-  Right,
   Body,
   Thumbnail,
+  Button,
 } from 'native-base';
 import {Friends as FriendsHeader, Friends} from '../../components/Header';
 import ss from '../../public/styles';
@@ -65,6 +64,19 @@ const Index = props => {
           />
         )}
       />
+      {!data.length && (
+        <View style={[ss.full, ss.center]}>
+          <View>
+            <Image
+              style={s.image}
+              source={require('../../public/images/no-friends.png')}
+            />
+            <Button style={[ss.bgCol2, ss.center]} onPress={() => props.navigation.navigate('SearchFriends')}>
+              <Text>Add friends</Text>
+            </Button>
+          </View>
+        </View>
+      )}
     </Container>
   );
 };
@@ -95,6 +107,7 @@ const Friend = props => {
 };
 
 const s = StyleSheet.create({
+  image: {width: 250, height: 250},
   thumbnail: {width: thumbnailSize, height: thumbnailSize},
   thumbnailContainer: {
     justifyContent: 'center',

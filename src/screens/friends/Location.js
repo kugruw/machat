@@ -1,14 +1,27 @@
-import React, {useState, useEffect} from 'react';
-import {View} from 'react-native';
+import React, {useContext, useState, useEffect} from 'react';
+import {StyleSheet, View} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import db from '../../config/firebase';
+import RootContext from '../../context';
 
 const Maps = () => {
-  const [data, setData] = useState({});
+  const {user} = useContext(RootContext);
+  const [data, setData] = useState([]);
 
   useEffect(() => {
+    const markers = [];
     db.ref('locations').on('value', snapshot => {
-      setData(snapshot.val());
+      const val = snapshot.val();
+      if (val !== null) {
+        Object.keys(val).forEach(key => {
+          markers.push({
+            key,
+            latitude: val[key].latitude,
+            longitude: val[key].longitude,
+          });
+        });
+        setData(markers);
+      }
     });
   }, []);
 
@@ -22,21 +35,25 @@ const Maps = () => {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}>
-        {data && Object.keys(data).map((key, i) => (
+        {data.map(elm => (
           <Marker
-            key={i}
+            key={elm.key}
             coordinate={{
-              latitude: data[key].latitude,
-              longitude: data[key].longitude,
+              latitude: elm.latitude,
+              longitude: elm.longitude,
             }}
-            title={key}
-            description={key}
+            title={elm.key === user.uid ? "I'am" : elm.key}
+            description={elm.key === user.uid ? 'My Location' : elm.key}
           />
         ))}
       </MapView>
     </View>
   );
 };
+
+const s = StyleSheet.create({
+  image: {width: 50, height: 50},
+});
 
 Maps.navigationOptions = {
   title: 'User location',

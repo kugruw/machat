@@ -1,7 +1,7 @@
 export const color = {
   col1: '#B2F0E8',
   col2: '#8DE5DB',
-  col3: '#2FC482',
+  col3: '#289C8E',
   col4: '#289C8E',
   col5: '#117C6F',
   gray: '#F9F6FD',
@@ -14,3 +14,4 @@ export const color = {
 };
 
 export default color;
+//2FC482

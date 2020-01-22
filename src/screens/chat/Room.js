@@ -10,7 +10,7 @@ import {
   FooterTab,
 } from 'native-base';
 import ss from '../../public/styles';
-import {toastr} from '../../helpers/script';
+import {ChatRoomHeader} from '../../components/Header';
 import RootContext from '../../context';
 import db from '../../config/firebase';
 
@@ -34,8 +34,15 @@ const Room = ({
       sender: user.uid,
       receiver: params.key,
     };
+
+    const timestamp = +new Date();
+
     if (chatId) {
-      db.ref(`messages/${chatId}/${+new Date()}`).set(postMessage);
+      db.ref(`chats/${params.key}/${chatId}`)
+        .set(timestamp)
+        .then(() => {
+          db.ref(`messages/${chatId}/${timestamp}`).set(postMessage);
+        });
     } else {
       const newChat = db
         .ref()
@@ -43,12 +50,12 @@ const Room = ({
         .push().key;
 
       db.ref(`chats/${params.key}`)
-        .update({[newChat]: true})
+        .update({[newChat]: timestamp})
         .then(() => {
           db.ref(`chats/${user.uid}`)
-            .update({[newChat]: true})
+            .update({[newChat]: timestamp})
             .then(() => {
-              db.ref(`messages/${newChat}/${+new Date()}`)
+              db.ref(`messages/${newChat}/${timestamp}`)
                 .set(postMessage)
                 .then(() => {
                   setChatId(newChat);
@@ -71,7 +78,7 @@ const Room = ({
           date: `${date.getHours()}.${date.getMinutes()}`,
         });
       });
-      setData(chatList);
+      setData(chatList.reverse());
     }
   }, [chat, chatId]);
 
@@ -82,11 +89,13 @@ const Room = ({
       setConfig(false);
     }
   }, [message]);
-  
+
   return (
     <Container style={[s.relative, ss.grayBgColor]}>
+      <ChatRoomHeader title={params.name} />
       <View style={s.container}>
         <FlatList
+          inverted
           contentContainerStyle={s.flexEnd}
           data={data}
           keyExtractor={item => item.key}
@@ -156,10 +165,8 @@ const s = StyleSheet.create({
   relative: {position: 'relative'},
 });
 
-Room.navigationOptions = ({navigation}) => {
-  return {
-    title: navigation.state.params.name,
-  };
+Room.navigationOptions = {
+  headerShown: false,
 };
 
 export default Room;
