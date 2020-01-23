@@ -1,5 +1,5 @@
 import React, {useContext, useState, useEffect} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, Image} from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import db from '../../config/firebase';
 import RootContext from '../../context';
@@ -7,18 +7,28 @@ import RootContext from '../../context';
 const Maps = () => {
   const {user} = useContext(RootContext);
   const [data, setData] = useState([]);
+  const [myLocation, setMyLocation] = useState({latitude: 0, longitude: 0});
 
   useEffect(() => {
-    const markers = [];
     db.ref('locations').on('value', snapshot => {
+      const markers = [];
       const val = snapshot.val();
       if (val !== null) {
         Object.keys(val).forEach(key => {
-          markers.push({
-            key,
-            latitude: val[key].latitude,
-            longitude: val[key].longitude,
-          });
+          const latitude = val[key].latitude;
+          const longitude = val[key].longitude;
+          if (key === user.uid) {
+            setMyLocation({latitude, longitude});
+          } else {
+            db.ref(`users/${key}`).once('value', snapshot => {
+              markers.push({
+                key,
+                latitude,
+                longitude,
+                snapshot: snapshot.val(),
+              });
+            });
+          }
         });
         setData(markers);
       }
@@ -30,11 +40,21 @@ const Maps = () => {
       <MapView
         style={{flex: 1}}
         initialRegion={{
-          latitude: -6.226241,
-          longitude: 106.854276,
+          latitude: myLocation.latitude,
+          longitude: myLocation.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}>
+        <Marker
+          key={user.uid}
+          coordinate={{
+            latitude: myLocation.latitude,
+            longitude: myLocation.longitude,
+          }}
+          title="I'am"
+          description={user.data.status}>
+          <ImageMarker avatar={user.data.avatar} />
+        </Marker>
         {data.map(elm => (
           <Marker
             key={elm.key}
@@ -42,17 +62,31 @@ const Maps = () => {
               latitude: elm.latitude,
               longitude: elm.longitude,
             }}
-            title={elm.key === user.uid ? "I'am" : elm.key}
-            description={elm.key === user.uid ? 'My Location' : elm.key}
-          />
+            title={elm.key}
+            description={elm.snapshot.status}>
+            <ImageMarker avatar={elm.snapshot.avatar} />
+          </Marker>
         ))}
       </MapView>
     </View>
   );
 };
 
+const ImageMarker = props => {
+  return (
+    <Image
+      source={
+        props.avatar
+          ? {uri: props.avatar}
+          : require('../../public/images/user2.png')
+      }
+      style={s.image}
+    />
+  );
+};
+
 const s = StyleSheet.create({
-  image: {width: 50, height: 50},
+  image: {width: 50, height: 50, borderRadius: 50 / 2},
 });
 
 Maps.navigationOptions = {
