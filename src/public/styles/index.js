@@ -50,6 +50,7 @@ const s = StyleSheet.create({
   rounded: {borderRadius: 3},
   textCenter: {textAlign: 'center'},
   relative: {position: 'relative'},
+  flex: {flex: 1},
   wFull: {width: '100%'},
   full: {position: 'absolute', top: 0, left: 0, right: 0, bottom: 0},
   w1_2: {width: '50%'},

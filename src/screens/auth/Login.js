@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import {Container, Text, Button} from 'native-base';
 
-import {toastr, getDataStorage} from '../../helpers/script';
+import {toastr} from '../../helpers/script';
 import s from '../../public/styles/login-register';
 import sColor from '../../public/styles/color';
 import sGlobal from '../../public/styles';
@@ -16,7 +16,13 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {firebase} from '../../config/firebase';
 import RootContext from '../../context';
 
-const Login = ({navigation: {push, navigate, state: {params}}}) => {
+const Login = ({
+  navigation: {
+    push,
+    navigate,
+    state: {params},
+  },
+}) => {
   const {dispatch} = useContext(RootContext);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
@@ -51,15 +57,6 @@ const Login = ({navigation: {push, navigate, state: {params}}}) => {
         toastr('Invalid email or password.', 'danger');
       });
   };
-
-  useEffect(() => {
-    getDataStorage('loggedIn', value => {
-      const redirect = params ? true : false;
-      if(value !== null && !redirect) {
-        navigate('Chat');
-      }
-    });
-  }, []);
 
   return (
     <Container style={s.center}>

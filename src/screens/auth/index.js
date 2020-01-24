@@ -1,22 +1,32 @@
 import React, {useEffect} from 'react';
-import {View, Text} from 'react-native';
-import {firebase} from '../../config/firebase';
+import {StyleSheet, View, Image} from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
+import ss from '../../public/styles';
 
 const index = ({navigation: {navigate}}) => {
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-          navigate('Chat');
-        } else {
-          navigate('Login');
-        }
-      });
+    AsyncStorage.getItem('loggedIn', (err, res) => {
+      if(!err) {
+        setTimeout(() => {
+          if (res) {
+            navigate('Chat');
+          } else {
+            navigate('Login');
+          }
+        }, 1000);
+      }
+    });
   }, []);
+
   return (
-    <View style={{height: '100%', justifyContent: 'center', alignItems: 'center'}}>
-      <Text>loading</Text>
+    <View style={[ss.center, ss.flex]}>
+      <Image source={require('../../public/images/logo-noname.png')} style={s.logo} />
     </View>
   );
 };
+
+const s = StyleSheet.create({
+  logo: {width: 150, height: 150},
+});
 
 export default index;

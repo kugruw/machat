@@ -23,6 +23,8 @@ import Profile from './src/screens/account/Profile';
 import Login from './src/screens/auth/Login';
 import SignUp from './src/screens/auth/SignUp';
 
+import AuthLoading from './src/screens/auth';
+
 const BottomTabNavigator = createBottomTabNavigator(
   {
     Friends,
@@ -86,6 +88,7 @@ const Main = createStackNavigator(
 
 const AppContainer = createAppContainer(
   createSwitchNavigator({
+    AuthLoading,
     Auth,
     Main,
   }),
