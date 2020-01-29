@@ -57,7 +57,11 @@ measurementId='YOUR_measurementId_FIREBASE'
 ```
 
 ## Screenshots
-
+<div align="center">
+    <img width="250" src="./readme-images/demo/location.png">   
+    <img width="250" src="./readme-images/demo/friend-profile.png">
+    <img width="250" src="./readme-images/demo/chat-list.png">
+</div>
 <div align="center">
     <img width="250" src="./readme-images/demo/friends.png">   
     <img width="250" src="./readme-images/demo/account.png">
@@ -73,6 +77,11 @@ measurementId='YOUR_measurementId_FIREBASE'
     <img width="250" src="./readme-images/demo/change-password.png">
     <img width="250" src="./readme-images/demo/change-email.png">
 </div>
+
+## Release APK
+<a href="https://drive.google.com/open?id=12PAhS7Rf0jYW_7AIIdfiyB_NDcZ0i0L0">
+  <img src="https://img.shields.io/badge/Download%20on%20the-Google%20Drive-blue.svg?style=popout&logo=google-drive"/>
+</a>
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
