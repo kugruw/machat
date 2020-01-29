@@ -71,7 +71,7 @@ const Index = props => {
               style={s.image}
               source={require('../../public/images/no-friends.png')}
             />
-            <Button style={[ss.bgCol2, ss.center]} onPress={() => props.navigation.navigate('SearchFriends')}>
+            <Button style={[ss.primaryBgColor, ss.center]} onPress={() => props.navigation.navigate('SearchFriends')}>
               <Text>Add friends</Text>
             </Button>
           </View>

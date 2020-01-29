@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useContext} from 'react';
 import {StyleSheet, View, ImageBackground} from 'react-native';
 import {
   Container,
@@ -18,8 +18,9 @@ import Header from '../../components/Header';
 import {DangerModal} from '../../components/Modal';
 import Loader from '../../components/Loader';
 import {toastr, clearSession} from '../../helpers/script';
-import db, {firebase} from '../../config/firebase';
 import AsyncStorage from '@react-native-community/async-storage';
+import db, {firebase} from '../../config/firebase';
+import RootContext from '../../context';
 
 export default function Account({
   navigation: {
@@ -28,6 +29,7 @@ export default function Account({
     state: {params},
   },
 }) {
+  const {dispatch} = useContext(RootContext);
   const [deleteModal, setDeleteModal] = useState(
     params ? params.delete : false,
   );
@@ -39,6 +41,7 @@ export default function Account({
       .signOut()
       .then(() => {
         AsyncStorage.removeItem('loggedIn').then(() => {
+          dispatch.reset(true);
           setConfig({loading: false, error: false});
           navigate('Login');
         });

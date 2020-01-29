@@ -43,7 +43,7 @@ const Index = props => {
     <Container>
       <Header title="Chat" />
       <FlatList
-        data={data}
+        data={data.reverse()}
         keyExtractor={item => item.chatId}
         renderItem={({item}) => (
           <ChatItem
@@ -69,7 +69,7 @@ const Index = props => {
               style={s.image}
               source={require('../../public/images/no-chat.png')}
             />
-            <Button style={[ss.bgCol2, ss.center]} onPress={() => props.navigation.navigate('Friends')}>
+            <Button style={[ss.primaryBgColor, ss.center]} onPress={() => props.navigation.navigate('Friends')}>
               <Text>Chatan sekarang!</Text>
             </Button>
           </View>

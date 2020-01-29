@@ -7,67 +7,64 @@ import RootContext from '../../context';
 const Maps = () => {
   const {user} = useContext(RootContext);
   const [data, setData] = useState([]);
-  const [myLocation, setMyLocation] = useState({latitude: 0, longitude: 0});
+  const [myLocation, setMyLocation] = useState(undefined);
 
   useEffect(() => {
     db.ref('locations').on('value', snapshot => {
-      const markers = [];
       const val = snapshot.val();
       if (val !== null) {
         Object.keys(val).forEach(key => {
-          const latitude = val[key].latitude;
-          const longitude = val[key].longitude;
+          const {latitude, longitude} = val[key];
           if (key === user.uid) {
             setMyLocation({latitude, longitude});
           } else {
             db.ref(`users/${key}`).once('value', snapshot => {
-              markers.push({
-                key,
-                latitude,
-                longitude,
-                snapshot: snapshot.val(),
-              });
+              setData(markers => [
+                ...markers,
+                {key, latitude, longitude, snapshot: snapshot.val()},
+              ]);
             });
           }
         });
-        setData(markers);
       }
     });
   }, []);
 
   return (
     <View style={{flex: 1}}>
-      <MapView
-        style={{flex: 1}}
-        initialRegion={{
-          latitude: myLocation.latitude,
-          longitude: myLocation.longitude,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}>
-        <Marker
-          key={user.uid}
-          coordinate={{
+      {myLocation && (
+        <MapView
+          style={{flex: 1}}
+          initialRegion={{
             latitude: myLocation.latitude,
             longitude: myLocation.longitude,
-          }}
-          title="I'am"
-          description={user.data.status}>
-          <ImageMarker avatar={user.data.avatar} />
-        </Marker>
-        {data.map(elm => (
+            latitudeDelta: 0.0922,
+            longitudeDelta: 0.0421,
+          }}>
           <Marker
-            key={elm.key}
+            key={user.uid}
             coordinate={{
-              latitude: elm.latitude,
-              longitude: elm.longitude,
+              latitude: myLocation.latitude,
+              longitude: myLocation.longitude,
             }}
-            title={elm.key}
-            description={elm.snapshot.status}>
-            <ImageMarker avatar={elm.snapshot.avatar} />
+            title="I'am"
+            description={user.data.status}>
+            <ImageMarker avatar={user.data.avatar} />
           </Marker>
-        ))}
-      </MapView>
+          {data.map(elm => (
+            <Marker
+              key={elm.key}
+              coordinate={{
+                latitude: elm.latitude,
+                longitude: elm.longitude,
+              }}
+              title={elm.key}
+              description={elm.snapshot.status}>
+              <ImageMarker avatar={elm.snapshot.avatar} />
+            </Marker>
+          ))}
+        </MapView>
+      )}
     </View>
   );
 };

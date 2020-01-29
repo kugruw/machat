@@ -50,6 +50,7 @@ const Login = ({
       .then(() => {
         setConfig({loading: false, error: false});
         dispatch.location(Math.random());
+        dispatch.reset(false);
         setLoggedIn();
       })
       .catch(() => {

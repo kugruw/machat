@@ -11,6 +11,7 @@ export const Provider = ({children}) => {
   const [chats, setChats] = useState(initialState.chats);
   const [location, setLocation] = useState(undefined);
   const [chatRoom, setChatRoom] = useState([]);
+  const [reset, setReset] = useState(false);
 
   const watchPosition = callback => {
     Geolocation.watchPosition(
@@ -42,52 +43,57 @@ export const Provider = ({children}) => {
   const dispatch = {
     location: payload => setLocation(payload),
     addChatRoom: payload => setChatRoom(payload),
+    reset: payload => setReset(payload),
   };
 
   useEffect(() => {
-    firebase.auth().onAuthStateChanged(usr => {
-      if (usr) {
-        const {displayName} = usr;
+    if (!reset) {
+      firebase.auth().onAuthStateChanged(usr => {
+        if (usr) {
+          const {displayName} = usr;
 
-        // Profile
-        db.ref(`users/${displayName}`).on('value', snapshot => {
-          const val = snapshot.val();
-          if (val !== null) {
-            setUser({uid: displayName, data: val});
-          }
-        });
-
-        // Friends
-        db.ref(`friends/${displayName}`).on('value', snapshot => {
-          const val = snapshot.val();
-          if (val !== null) {
-            const friend = {};
-            for (const key in val) {
-              // Friends profile
-              db.ref(`users/${key}`).on('value', snapshot => {
-                friend[key] = snapshot.val();
-                setFriends(friend);
-              });
+          // Profile
+          db.ref(`users/${displayName}`).on('value', snapshot => {
+            const val = snapshot.val();
+            if (val !== null) {
+              setUser({uid: displayName, data: val});
             }
-          }
-        });
+          });
 
-        // Chats
-        db.ref(`chats/${displayName}`).on('value', snapshot => {
-          const val = snapshot.val();
-          if (val !== null) {
-            const chat = {};
-            for (const key in val) {
-              db.ref(`messages/${key}`).on('value', snapshot => {
-                chat[key] = snapshot.val();
-                setChats(chat);
-              });
+          // Friends
+          db.ref(`friends/${displayName}`).on('value', snapshot => {
+            const val = snapshot.val();
+            if (val !== null) {
+              for (const key in val) {
+                // Friends profile
+                db.ref(`users/${key}`).on('value', snapshot => {
+                  setFriends(friends => ({...friends, [key]: snapshot.val()}));
+                });
+              }
             }
-          }
-        });
-      }
-    });
-  }, []);
+          });
+
+          // Chats
+          db.ref(`chats/${displayName}`).on('value', snapshot => {
+            const val = snapshot.val();
+            if (val !== null) {
+              for (const key in val) {
+                db.ref(`messages/${key}`).on('value', snapshot => {
+                  setChats(chats => ({...chats, [key]: snapshot.val()}));
+                });
+              }
+            }
+          });
+        }
+      });
+    } else {
+      // Set to initial state when user is logout
+      setUser({uid: '', ...initialState.user});
+      setFriends(initialState.friends);
+      setChats(initialState.chats);
+      setChatRoom([]);
+    }
+  }, [reset]);
 
   useEffect(() => {
     const user = firebase.auth().currentUser;
